@@ -1,9 +1,82 @@
-// 各項目の倍率を定義
-const multipliers = {
-    'A': 2500,
-    'B': 1000,
-    'C': 1000
-};
+let multipliersData = {}; // 全曜日の倍率データを保持するオブジェクト
+
+/**
+ * 倍率データをJSONファイルから非同期で読み込む関数
+ */
+async function loadMultipliers() {
+    try {
+        const response = await fetch('multipliers.json'); // multipliers.jsonを読み込み
+        if (!response.ok) {
+            throw new Error(`HTTP error! status: ${response.status}`);
+        }
+        multipliersData = await response.json(); // JSONとしてパースしてmultipliersData変数に格納
+        console.log('倍率データを読み込みました:', multipliersData);
+
+        // 各曜日の入力フォームを動的に生成
+        generateInputForms();
+
+        // データを読み込んだ後に初期計算を実行し、最初のタブをアクティブにする
+        const firstTabButton = document.querySelector('.tab-button.active');
+        if (firstTabButton) {
+            firstTabButton.click(); // openTab関数がcalculateTotalを呼び出す
+        } else {
+            // アクティブなタブボタンがない場合、最初のタブボタンをクリック
+            document.querySelector('.tab-button')?.click();
+        }
+
+    } catch (error) {
+        console.error('倍率データの読み込み中にエラーが発生しました:', error);
+        // エラーが発生した場合のフォールバック（A～Iのデフォルト値など）
+        console.warn('デフォルトの倍率データを使用します。');
+        multipliersData = {
+            "monday":    { "A": 2500, "B": 1000, "C": 1000, "D": 500, "E": 200, "F": 100, "G": 50, "H": 25, "I": 10 },
+            "tuesday":   { "A": 2500, "B": 1000, "C": 1000, "D": 500, "E": 200, "F": 100, "G": 50, "H": 25, "I": 10 },
+            "wednesday": { "A": 2500, "B": 1000, "C": 1000, "D": 500, "E": 200, "F": 100, "G": 50, "H": 25, "I": 10 },
+            "thursday":  { "A": 2500, "B": 1000, "C": 1000, "D": 500, "E": 200, "F": 100, "G": 50, "H": 25, "I": 10 },
+            "friday":    { "A": 2500, "B": 1000, "C": 1000, "D": 500, "E": 200, "F": 100, "G": 50, "H": 25, "I": 10 },
+            "saturday":  { "A": 2500, "B": 1000, "C": 1000, "D": 500, "E": 200, "F": 100, "G": 50, "H": 25, "I": 10 }
+        };
+        generateInputForms(); // フォールバックデータでフォームを生成
+        const firstTabButton = document.querySelector('.tab-button.active');
+        if (firstTabButton) {
+            firstTabButton.click();
+        } else {
+            document.querySelector('.tab-button')?.click();
+        }
+    }
+}
+
+/**
+ * multipliersDataを元に、各曜日の入力フォームを動的に生成する関数
+ */
+function generateInputForms() {
+    const days = ['monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday'];
+    days.forEach(day => {
+        const inputContainer = document.getElementById(`inputContainer_${day}`);
+        if (!inputContainer) return; // コンテナが見つからなければスキップ
+
+        // 既存の内容をクリア
+        inputContainer.innerHTML = '';
+
+        const dayMultipliers = multipliersData[day];
+        if (!dayMultipliers) return; // その曜日のデータがなければスキップ
+
+        // JSONに定義されているキー（A, B, C...）の順番でフォームを生成
+        for (const itemKey in dayMultipliers) {
+            const multiplierValue = dayMultipliers[itemKey];
+
+            const inputGroup = document.createElement('div');
+            inputGroup.classList.add('input-group');
+
+            inputGroup.innerHTML = `
+                <label for="input${itemKey}_${day}">${itemKey}:</label>
+                <input type="number" id="input${itemKey}_${day}" value="" placeholder="数字を入力">
+                <span class="multiplier-display">(倍率: <span id="multiplier${itemKey}_${day}">${multiplierValue.toLocaleString()}</span>)</span>
+            `;
+            inputContainer.appendChild(inputGroup);
+        }
+    });
+}
 
 /**
  * 曜日タブを切り替える関数
@@ -29,58 +102,68 @@ function openTab(evt, tabName) {
     document.getElementById(tabName).classList.add("active");
     evt.currentTarget.classList.add("active");
 
-    // タブが切り替わった際に、そのタブの合計を再計算する
-    // これにより、タブを切り替えたときに最新の合計が表示される
-    calculateTotal(tabName);
+    // タブが切り替わった際に、localStorageからデータを復元し、そのタブの合計を再計算する
+    restoreInputsAndCalculateTotal(tabName);
 }
 
 /**
+ * 指定された曜日の入力値をlocalStorageから復元し、合計を計算し、表示を更新する関数
+ * @param {string} day - 処理対象の曜日 (例: 'monday')
+ */
+function restoreInputsAndCalculateTotal(day) {
+    const dayMultipliers = multipliersData[day];
+    if (!dayMultipliers) return;
+
+    // localStorageから入力値を復元
+    for (const itemKey in dayMultipliers) {
+        const storedValue = localStorage.getItem(`input${itemKey}_${day}`);
+        const inputElement = document.getElementById(`input${itemKey}_${day}`);
+        if (inputElement && storedValue !== null) {
+            inputElement.value = storedValue;
+        }
+    }
+    // 復元された値で合計を計算
+    calculateTotal(day);
+}
+
+
+/**
  * 指定された曜日の合計を計算し、表示を更新する関数
+ * multipliersData内のその曜日の項目と倍率をループして計算します。
  * @param {string} day - 計算対象の曜日 (例: 'monday')
  */
 function calculateTotal(day) {
-    // 各入力フィールドから値を取得。入力がない場合は0として扱う
-    const inputA = parseFloat(document.getElementById(`inputA_${day}`).value) || 0;
-    const inputB = parseFloat(document.getElementById(`inputB_${day}`).value) || 0;
-    const inputC = parseFloat(document.getElementById(`inputC_${day}`).value) || 0;
+    let total = 0;
+    const dayMultipliers = multipliersData[day]; // その曜日の倍率データを取得
 
-    // 倍率を適用して合計を計算
-    const total = (inputA * multipliers.A) + (inputB * multipliers.B) + (inputC * multipliers.C);
+    if (!dayMultipliers) {
+        document.getElementById(`total_${day}`).textContent = '0';
+        return;
+    }
+
+    // その曜日の各項目（A, B, C...）をループして計算
+    for (const itemKey in dayMultipliers) {
+        const multiplierValue = dayMultipliers[itemKey];
+        const inputElement = document.getElementById(`input${itemKey}_${day}`);
+
+        if (inputElement) { // 要素が存在すれば
+            const inputValue = parseFloat(inputElement.value) || 0;
+            total += (inputValue * multiplierValue); // その項目の倍率を使用
+            // 入力値をlocalStorageに保存
+            localStorage.setItem(`input${itemKey}_${day}`, inputValue);
+        }
+    }
 
     // 計算結果を表示要素にセット
     document.getElementById(`total_${day}`).textContent = total.toLocaleString(); // カンマ区切りで表示
-    
-    // 入力値をlocalStorageに保存 (ブラウザを閉じてもデータを保持するため)
-    localStorage.setItem(`inputA_${day}`, inputA);
-    localStorage.setItem(`inputB_${day}`, inputB);
-    localStorage.setItem(`inputC_${day}`, inputC);
 }
+
 
 /**
  * ページロード時に実行される初期化処理
  */
-document.addEventListener('DOMContentLoaded', () => {
-    // 全てのタブコンテンツの入力値をlocalStorageから読み込み、表示する
-    const days = ['monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday'];
-    days.forEach(day => {
-        const storedA = localStorage.getItem(`inputA_${day}`);
-        const storedB = localStorage.getItem(`inputB_${day}`);
-        const storedC = localStorage.getItem(`inputC_${day}`);
-
-        if (storedA !== null) {
-            document.getElementById(`inputA_${day}`).value = storedA;
-        }
-        if (storedB !== null) {
-            document.getElementById(`inputB_${day}`).value = storedB;
-        }
-        if (storedC !== null) {
-            document.getElementById(`inputC_${day}`).value = storedC;
-        }
-        // 初期ロード時には、保存されている値に基づいて合計を計算・表示
-        // これがないと、ページロード時に前回の合計が表示されない
-        calculateTotal(day);
-    });
-
-    // ページロード時に最初のタブ（月曜日）をアクティブにする
-    document.querySelector('.tab-button.active').click();
+document.addEventListener('DOMContentLoaded', async () => {
+    // まず倍率データをJSONファイルから読み込む
+    await loadMultipliers();
+    // loadMultipliers内で generateInputForms と最初のタブのアクティブ化、初期計算も行われます
 });
