@@ -135,66 +135,6 @@ button[onclick^="reset"]:hover {
     background-color: #c82333;
 }
 
-/* アコーディオンスタイル */
-.accordion-header {
-    background-color: #f0f0f0;
-    color: #333;
-    cursor: pointer;
-    padding: 15px;
-    width: 100%;
-    border: none;
-    text-align: left;
-    outline: none;
-    font-size: 18px;
-    transition: background-color 0.3s ease;
-    border-radius: 5px;
-    margin-bottom: 10px;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-}
-
-.accordion-header:hover {
-    background-color: #e0e0e0;
-}
-
-.accordion-header::after {
-    content: '\02795'; /* プラス記号 */
-    font-size: 13px;
-    color: #777;
-    float: right;
-    margin-left: 5px;
-    transition: transform 0.3s ease;
-}
-
-.accordion-header.active::after {
-    content: '\2796'; /* マイナス記号 */
-    transform: rotate(0deg); /* 不要だが残す */
-}
-
-.accordion-content {
-    padding: 0 18px;
-    background-color: white;
-    max-height: 0;
-    overflow: hidden;
-    transition: max-height 0.3s ease-out;
-    border-left: 1px solid #ddd;
-    border-right: 1px solid #ddd;
-    border-bottom: 1px solid #ddd;
-    border-radius: 0 0 5px 5px;
-    margin-bottom: 10px;
-}
-
-.accordion-content.show {
-    max-height: 1000px; /* 内容に合わせて調整が必要 */
-    transition: max-height 0.5s ease-in;
-}
-
-/* アコーディオン内のinput-groupの調整 */
-.accordion-content .input-group {
-    padding-left: 10px; /* インデント */
-}
-
 /* スマホ表示の調整 */
 @media (max-width: 600px) {
     .container {
