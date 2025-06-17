@@ -77,7 +77,7 @@ async function loadMultipliers() {
                 "UR英雄かけらを1枚消費する": { "multiplier": 25000.0, "default_unit": "none" },
                 "SSR英雄かけらを1枚消費する": { "multiplier": 8750.0, "default_unit": "none" },
                 "SR英雄かけらを1枚消費する": { "multiplier": 2500.0, "default_unit": "none" },
-                "スキルメダルを1枚消費する": { "multiplier": 30.0, "default_unit": "K" },
+                "スキルメダルを1枚消費する": { "multiplier": 30.0, "default_unit": "none" },
                 "専用武装のかけらを1枚消費する": { "multiplier": 25000.0, "default_unit": "none" }
             },
             "friday": {
@@ -168,18 +168,16 @@ function generateInputForms() {
 
         for (const itemKey in dayItems) {
             const itemData = dayItems[itemKey];
-            const multiplierValue = itemData.multiplier.toFixed(1);
+            const multiplierValue = itemData.multiplier.toFixed(1); // 小数点以下1桁表示にフォーマット
             const defaultUnit = itemData.default_unit || "none";
 
             const inputGroup = document.createElement('div');
             inputGroup.classList.add('input-group');
 
             let unitSelectHtml = '';
-            // default_unitが"none"以外の場合のみ単位選択のプルダウンを追加
             if (defaultUnit !== 'none') {
                 let unitSelectOptions = '';
                 for (const unit in unitFactors) {
-                    // "none"以外の単位のみオプションに追加
                     if (unit !== 'none') {
                         unitSelectOptions += `<option value="${unit}">${unit.toUpperCase()}</option>`;
                     }
@@ -198,6 +196,14 @@ function generateInputForms() {
                 <span class="multiplier-display">(+<span id="multiplier${itemKey}_${day}">${multiplierValue}</span>)</span>
             `;
             inputContainer.appendChild(inputGroup);
+
+            // ドロップダウンのデフォルト値とイベントリスナーを設定 (プルダウンが存在する場合のみ)
+            if (defaultUnit !== 'none') {
+                const unitSelect = document.getElementById(`unitSelect_${itemKey}_${day}`);
+                if (unitSelect) {
+                    // localStorageからの復元はopenTab/restoreInputsAndCalculateTotalで処理するため、ここでは行わない
+                }
+            }
         }
     });
 }
@@ -298,6 +304,7 @@ function calculateTotal(day) {
         }
     }
 
+    // ここを修正: Math.ceil()で小数点以下を繰り上げた後、toLocaleString()で桁区切り
     document.getElementById(`total_${day}`).textContent = Math.ceil(total).toLocaleString();
 }
 
@@ -334,8 +341,11 @@ function calculateAndSave(day) {
             const unitFactor = unitFactors[currentUnit] || 1.0;
 
             total += (inputValue * unitFactor) * baseMultiplier;
+
+            // localStorageに保存する処理は削除されたまま
         }
     }
+    // ここを修正: Math.ceil()で小数点以下を繰り上げた後、toLocaleString()で桁区切り
     document.getElementById(`total_${day}`).textContent = Math.ceil(total).toLocaleString();
 }
 
@@ -378,4 +388,5 @@ document.addEventListener('DOMContentLoaded', async () => {
 
     // 入力フィールドの変更時に自動計算しないようにイベントリスナーを削除
     // 代わりにOKボタンで calculateAndSave を呼び出す
+    // inputContainer.addEventListener('input', ... ) のブロックは削除
 });
