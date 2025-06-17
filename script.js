@@ -34,18 +34,113 @@ async function loadMultipliers() {
         console.warn('デフォルトの倍率データを使用します。');
         // エラー発生時のフォールバックデータ (Kを追加)
         unitFactors = {
-            "none": 1,
-            "K": 1000,
-            "M": 1000000,
-            "G": 100000000
+            "none": 1.0,
+            "K": 1000.0,
+            "M": 1000000.0,
+            "G": 100000000.0
         };
         multipliersData = {
-            "monday":    { "A": { "multiplier": 2500, "default_unit": "none" }, "B": { "multiplier": 1000, "default_unit": "K" }, "C": { "multiplier": 1000, "default_unit": "none" }, "D": { "multiplier": 500, "default_unit": "M" }, "E": { "multiplier": 200, "default_unit": "none" }, "F": { "multiplier": 100, "default_unit": "none" }, "G": { "multiplier": 50, "default_unit": "none" }, "H": { "multiplier": 25, "default_unit": "none" }, "I": { "multiplier": 10, "default_unit": "none" } },
-            "tuesday":   { "A": { "multiplier": 2500, "default_unit": "none" }, "B": { "multiplier": 1000, "default_unit": "K" }, "C": { "multiplier": 1000, "default_unit": "none" }, "D": { "multiplier": 500, "default_unit": "M" }, "E": { "multiplier": 200, "default_unit": "none" }, "F": { "multiplier": 100, "default_unit": "none" }, "G": { "multiplier": 50, "default_unit": "none" }, "H": { "multiplier": 25, "default_unit": "none" }, "I": { "multiplier": 10, "default_unit": "none" } },
-            "wednesday": { "A": { "multiplier": 2500, "default_unit": "none" }, "B": { "multiplier": 1000, "default_unit": "K" }, "C": { "multiplier": 1000, "default_unit": "none" }, "D": { "multiplier": 500, "default_unit": "M" }, "E": { "multiplier": 200, "default_unit": "none" }, "F": { "multiplier": 100, "default_unit": "none" }, "G": { "multiplier": 50, "default_unit": "none" }, "H": { "multiplier": 25, "default_unit": "none" }, "I": { "multiplier": 10, "default_unit": "none" } },
-            "thursday":  { "A": { "multiplier": 2500, "default_unit": "none" }, "B": { "multiplier": 1000, "default_unit": "K" }, "C": { "multiplier": 1000, "default_unit": "none" }, "D": { "multiplier": 500, "default_unit": "M" }, "E": { "multiplier": 200, "default_unit": "none" }, "F": { "multiplier": 100, "default_unit": "none" }, "G": { "multiplier": 50, "default_unit": "none" }, "H": { "multiplier": 25, "default_unit": "none" }, "I": { "multiplier": 10, "default_unit": "none" } },
-            "friday":    { "A": { "multiplier": 2500, "default_unit": "none" }, "B": { "multiplier": 1000, "default_unit": "K" }, "C": { "multiplier": 1000, "default_unit": "none" }, "D": { "multiplier": 500, "default_unit": "M" }, "E": { "multiplier": 200, "default_unit": "none" }, "F": { "multiplier": 100, "default_unit": "none" }, "G": { "multiplier": 50, "default_unit": "none" }, "H": { "multiplier": 25, "default_unit": "none" }, "I": { "multiplier": 10, "default_unit": "none" } },
-            "saturday":  { "A": { "multiplier": 2500, "default_unit": "none" }, "B": { "multiplier": 1000, "default_unit": "K" }, "C": { "multiplier": 1000, "default_unit": "none" }, "D": { "multiplier": 500, "default_unit": "M" }, "E": { "multiplier": 200, "default_unit": "none" }, "F": { "multiplier": 100, "default_unit": "none" }, "G": { "multiplier": 50, "default_unit": "none" }, "H": { "multiplier": 25, "default_unit": "none" }, "I": { "multiplier": 10, "default_unit": "none" } }
+            "monday": {
+                "APを1消費する": { "multiplier": 375.0, "default_unit": "none" },
+                "レーダークエストを1回クリアする": { "multiplier": 30000.0, "default_unit": "none" },
+                "一度に英雄Expを660以上消費する": { "multiplier": 2.5, "default_unit": "M" },
+                "ドローン戦闘データを1消費する": { "multiplier": 7.5, "default_unit": "K" },
+                "ドローンギアを1個消費する": { "multiplier": 6250.0, "default_unit": "none" },
+                "食料を100採集する": { "multiplier": 50.0, "default_unit": "none" },
+                "鋼材を100採集する": { "multiplier": 50.0, "default_unit": "none" },
+                "金貨を100採集する": { "multiplier": 50.0, "default_unit": "none" },
+                "チップ宝箱の開封でチップ材料(上級)を1点獲得": { "multiplier": 2812.5, "default_unit": "none" }
+            },
+            "tuesday": {
+                "建造の残り時間を1分短縮する": { "multiplier": 150.0, "default_unit": "none" },
+                "施設建設で戦力を1獲得する": { "multiplier": 30.0, "default_unit": "none" },
+                "UR貿易輸送車を1回発車する": { "multiplier": 300000.0, "default_unit": "none" },
+                "UR極秘任務を1回遂行する": { "multiplier": 225000.0, "default_unit": "none" },
+                "生存者募集を1回行う": { "multiplier": 4500.0, "default_unit": "none" }
+            },
+            "wednesday": {
+                "科学研究の残り時間を1分短縮する": { "multiplier": 150.0, "default_unit": "none" },
+                "科学研究で戦力を1獲得する": { "multiplier": 30.0, "default_unit": "none" },
+                "知恵の勲章を1枚消費する": { "multiplier": 750.0, "default_unit": "none" },
+                "レーダークエストを1回クリアする": { "multiplier": 30000.0, "default_unit": "none" },
+                "Lv.1ドローン宝箱を開ける": { "multiplier": 2750.0, "default_unit": "none" },
+                "Lv.2ドローン宝箱を開ける": { "multiplier": 8250.0, "default_unit": "none" },
+                "Lv.3ドローン宝箱を開ける": { "multiplier": 25000.0, "default_unit": "none" },
+                "Lv.4ドローン宝箱を開ける": { "multiplier": 75000.0, "default_unit": "none" },
+                "Lv.5ドローン宝箱を開ける": { "multiplier": 225000.0, "default_unit": "none" },
+                "Lv.6ドローン宝箱を開ける": { "multiplier": 675000.0, "default_unit": "none" },
+                "Lv.7ドローン宝箱を開ける": { "multiplier": 2025000.0, "default_unit": "none" }
+            },
+            "thursday": {
+                "英雄を1回募集する": { "multiplier": 4500.0, "default_unit": "none" },
+                "一度に英雄Expを660以上消費する": { "multiplier": 2.5, "default_unit": "M" },
+                "UR英雄かけらを1枚消費する": { "multiplier": 25000.0, "default_unit": "none" },
+                "SSR英雄かけらを1枚消費する": { "multiplier": 8750.0, "default_unit": "none" },
+                "SR英雄かけらを1枚消費する": { "multiplier": 2500.0, "default_unit": "none" },
+                "スキルメダルを1枚消費する": { "multiplier": 30.0, "default_unit": "none" },
+                "専用武装のかけらを1枚消費する": { "multiplier": 25000.0, "default_unit": "none" }
+            },
+            "friday": {
+                "レーダークエストを1回クリアする": { "multiplier": 30000.0, "default_unit": "none" },
+                "建造の残り時間を1分短縮する": { "multiplier": 150.0, "default_unit": "none" },
+                "施設建設で戦力を1獲得する": { "multiplier": 30.0, "default_unit": "none" },
+                "科学研究の残り時間を1分短縮する": { "multiplier": 150.0, "default_unit": "none" },
+                "科学研究で戦力を1獲得する": { "multiplier": 30.0, "default_unit": "none" },
+                "訓練の残り時間を1分短縮する": { "multiplier": 150.0, "default_unit": "none" },
+                "LV.1兵士を1人訓練する": { "multiplier": 60.0, "default_unit": "none" },
+                "LV.2兵士を1人訓練する": { "multiplier": 90.0, "default_unit": "none" },
+                "LV.3兵士を1人訓練する": { "multiplier": 120.0, "default_unit": "none" },
+                "LV.4兵士を1人訓練する": { "multiplier": 150.0, "default_unit": "none" },
+                "LV.5兵士を1人訓練する": { "multiplier": 180.0, "default_unit": "none" },
+                "LV.6兵士を1人訓練する": { "multiplier": 210.0, "default_unit": "none" },
+                "LV.7兵士を1人訓練する": { "multiplier": 240.0, "default_unit": "none" },
+                "LV.8兵士を1人訓練する": { "multiplier": 270.0, "default_unit": "none" },
+                "LV.9兵士を1人訓練する": { "multiplier": 300.0, "default_unit": "none" },
+                "LV.10兵士を1人訓練する": { "multiplier": 330.0, "default_unit": "none" },
+                "ドミネーターのかけらを1枚消費する": { "multiplier": 25000.0, "default_unit": "none" },
+                "ドミネーターの訓練ノートを100個消費する": { "multiplier": 1562.5, "default_unit": "none" },
+                "ドミネーターの訓練証明書を1枚消費する": { "multiplier": 3750.0, "default_unit": "none" },
+                "ドミネーターの連携の証を1枚消費する": { "multiplier": 75000.0, "default_unit": "none" },
+                "ドミネーターのスキルメダルを1枚消費する": { "multiplier": 12.5, "default_unit": "none" }
+            },
+            "saturday": {
+                "UR貿易輸送車を1回発車する": { "multiplier": 300000.0, "default_unit": "none" },
+                "UR極秘任務を1回遂行する": { "multiplier": 225000.0, "default_unit": "none" },
+                "建造の残り時間を1分短縮する": { "multiplier": 150.0, "default_unit": "none" },
+                "科学研究の残り時間を1分短縮する": { "multiplier": 150.0, "default_unit": "none" },
+                "訓練の残り時間を1分短縮する": { "multiplier": 150.0, "default_unit": "none" },
+                "治療の残り時間を1分短縮する": { "multiplier": 150.0, "default_unit": "none" },
+                "相手連盟のLv.1兵士を1体撃破する": { "multiplier": 30.0, "default_unit": "none" },
+                "相手連盟のLv.2兵士を1体撃破": { "multiplier": 45.0, "default_unit": "none" },
+                "相手連盟のLv.3兵士を1体撃破する": { "multiplier": 60.0, "default_unit": "none" },
+                "相手連盟のLv.4兵士を1体撃破する": { "multiplier": 75.0, "default_unit": "none" },
+                "相手連盟のLv.5兵士を1体撃破する": { "multiplier": 90.0, "default_unit": "none" },
+                "相手連盟のLv.6兵士を1体撃破する": { "multiplier": 105.0, "default_unit": "none" },
+                "相手連盟のLv.7兵士を1体撃破する": { "multiplier": 120.0, "default_unit": "none" },
+                "相手連盟のLv.8兵士を1体撃破する": { "multiplier": 135.0, "default_unit": "none" },
+                "相手連盟のLv.9兵士を1体撃破する": { "multiplier": 150.0, "default_unit": "none" },
+                "相手連盟のLv.10兵士を1体撃破する": { "multiplier": 165.0, "default_unit": "none" },
+                "Lv.1兵士を1体撃破する": { "multiplier": 6.0, "default_unit": "none" },
+                "Lv.2兵士を1体撃破する": { "multiplier": 9.0, "default_unit": "none" },
+                "Lv.3兵士を1体撃破する": { "multiplier": 12.0, "default_unit": "none" },
+                "Lv.4兵士を1体撃破する": { "multiplier": 15.0, "default_unit": "none" },
+                "Lv.5兵士を1体撃破する": { "multiplier": 18.0, "default_unit": "none" },
+                "Lv.6兵士を1体撃破する": { "multiplier": 21.0, "default_unit": "none" },
+                "v.7兵士を1体撃破する": { "multiplier": 24.0, "default_unit": "none" },
+                "Lv.8兵士を1体撃破する": { "multiplier": 27.0, "default_unit": "none" },
+                "Lv.9兵士を1体撃破する": { "multiplier": 30.0, "default_unit": "none" },
+                "Lv.10兵士を1体撃破する": { "multiplier": 33.0, "default_unit": "none" },
+                "Lv.1兵士を1体撃破される": { "multiplier": 5.0, "default_unit": "none" },
+                "Lv.2兵士を1体撃破される": { "multiplier": 7.5, "default_unit": "none" },
+                "Lv.3兵士を1体撃破される": { "multiplier": 10.0, "default_unit": "none" },
+                "Lv.4兵士を1体撃破される": { "multiplier": 12.5, "default_unit": "none" },
+                "Lv.5兵士を1体撃破される": { "multiplier": 15.0, "default_unit": "none" },
+                "Lv.6兵士を1体撃破される": { "multiplier": 17.5, "default_unit": "none" },
+                "v.7兵士を1体撃破される": { "multiplier": 20.0, "default_unit": "none" },
+                "Lv.8兵士を1体撃破される": { "multiplier": 22.5, "default_unit": "none" },
+                "Lv.9兵士を1体撃破される": { "multiplier": 25.0, "default_unit": "none" },
+                "Lv.10兵士を1体撃破される": { "multiplier": 27.5, "default_unit": "none" }
+            }
         };
         generateInputForms();
         const firstTabButton = document.querySelector('.tab-button.active');
@@ -68,24 +163,21 @@ function generateInputForms() {
 
         inputContainer.innerHTML = ''; // 既存の内容をクリア
 
-        const dayItems = multipliersData[day]; // その曜日の項目データ (例: {A: {...}, B: {...}})
+        const dayItems = multipliersData[day]; // その曜日の項目データ
         if (!dayItems) return;
 
-        // JSONに定義されているキー（A, B, C...）の順番でフォームを生成
         for (const itemKey in dayItems) {
-            const itemData = dayItems[itemKey]; // 例: { multiplier: 2500, default_unit: "none" }
-            const multiplierValue = itemData.multiplier;
-            const defaultUnit = itemData.default_unit || "none"; // default_unitがない場合は"none"
+            const itemData = dayItems[itemKey];
+            // toFixed(1)で小数点以下1桁表示にフォーマット
+            const multiplierValue = itemData.multiplier.toFixed(1);
+            const defaultUnit = itemData.default_unit || "none";
 
             const inputGroup = document.createElement('div');
             inputGroup.classList.add('input-group');
 
-            // 単位選択ドロップダウンのHTMLを生成 (default_unitが"none"の場合は生成しない)
             let unitSelectHtml = '';
             if (defaultUnit !== 'none') {
                 let unitSelectOptions = '';
-                // unitFactorsのキー（K, M, Gなど）をループしてオプションを作成
-                // "none"はプルダウンで表示しないため除外
                 for (const unit in unitFactors) {
                     if (unit !== 'none') {
                         unitSelectOptions += `<option value="${unit}">${unit.toUpperCase()}</option>`;
@@ -98,11 +190,12 @@ function generateInputForms() {
                 `;
             }
 
+            // ここを修正: 倍率表示と入力フィールドの順序とフォーマットを変更
             inputGroup.innerHTML = `
                 <label for="input${itemKey}_${day}">${itemKey}:</label>
+                <span class="multiplier-display">(+<span id="multiplier${itemKey}_${day}">${multiplierValue}</span>)</span>
                 <input type="number" id="input${itemKey}_${day}" value="" placeholder="数字を入力">
                 ${unitSelectHtml}
-                <span class="multiplier-display">(倍率: <span id="multiplier${itemKey}_${day}">${multiplierValue.toLocaleString()}</span>)</span>
             `;
             inputContainer.appendChild(inputGroup);
 
@@ -110,20 +203,15 @@ function generateInputForms() {
             if (defaultUnit !== 'none') {
                 const unitSelect = document.getElementById(`unitSelect_${itemKey}_${day}`);
                 if (unitSelect) {
-                    // localStorageに保存された単位、またはJSONで指定されたデフォルト単位をセット
                     const storedUnit = localStorage.getItem(`unit_${itemKey}_${day}`);
                     unitSelect.value = storedUnit !== null ? storedUnit : defaultUnit;
 
-                    // ドロップダウンが変更されたら、そのタブの合計を再計算
                     unitSelect.addEventListener('change', () => {
                         calculateTotal(day);
-                        // 単位選択状態をlocalStorageに保存
                         localStorage.setItem(`unit_${itemKey}_${day}`, unitSelect.value);
                     });
                 }
             } else {
-                // "none"の場合は、localStorageに"none"を保存しておく
-                // これがないと、一旦"none"で表示された後、別の単位に設定した場合に次回開いた時に"none"に戻ってしまう可能性がある
                 localStorage.setItem(`unit_${itemKey}_${day}`, 'none');
             }
         }
@@ -196,7 +284,7 @@ function calculateTotal(day) {
     const dayItems = multipliersData[day]; // その曜日の項目データ
 
     if (!dayItems) {
-        document.getElementById(`total_${day}`).textContent = '0';
+        document.getElementById(`total_${day}`).textContent = '0.0'; // 小数点1桁表示に合わせる
         return;
     }
 
@@ -207,42 +295,31 @@ function calculateTotal(day) {
         const defaultUnit = itemData.default_unit || "none";
 
         const inputElement = document.getElementById(`input${itemKey}_${day}`);
-        // 単位セレクタはdefaultUnitが'none'でない場合のみ存在するため、条件分岐
         const unitSelect = (defaultUnit !== 'none') ? document.getElementById(`unitSelect_${itemKey}_${day}`) : null;
 
-        if (inputElement) { // 入力要素が存在すれば
+        if (inputElement) {
             const inputValue = parseFloat(inputElement.value) || 0;
-            let currentUnit = defaultUnit; // デフォルト単位を初期値とする
+            let currentUnit = defaultUnit;
 
-            if (unitSelect) { // プルダウンが存在すれば、その選択値を使用
+            if (unitSelect) {
                 currentUnit = unitSelect.value;
-            } else {
-                // プルダウンが存在しない（defaultUnitが'none'の場合）は、localStorageから読み込むか'none'を適用
-                // ただし、localStorageには既に'none'が設定されているはずなので、ここでは特に処理は不要
-                // safety: currentUnit = localStorage.getItem(`unit_${itemKey}_${day}`) || defaultUnit;
             }
             
-            const unitFactor = unitFactors[currentUnit] || 1; // 選択された単位の調整倍率、なければ1
+            const unitFactor = unitFactors[currentUnit] || 1.0;
 
-            // (入力値 × 単位の調整倍率) × 項目の基本倍率
             total += (inputValue * unitFactor) * baseMultiplier;
 
-            // 入力値は常に保存
             localStorage.setItem(`input${itemKey}_${day}`, inputValue);
-            // 単位選択状態は、プルダウンが存在しない場合も'none'として保存
             localStorage.setItem(`unit_${itemKey}_${day}`, currentUnit);
         }
     }
 
-    // 計算結果を表示要素にセット
-    document.getElementById(`total_${day}`).textContent = total.toLocaleString(); // カンマ区切りで表示
+    document.getElementById(`total_${day}`).textContent = total.toFixed(1).toLocaleString();
 }
 
 /**
  * ページロード時に実行される初期化処理
  */
 document.addEventListener('DOMContentLoaded', async () => {
-    // まず倍率データをJSONファイルから読み込む
     await loadMultipliers();
-    // loadMultipliers内で generateInputForms と最初のタブのアクティブ化、初期計算も行われます
 });
