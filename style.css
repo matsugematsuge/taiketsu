@@ -1,68 +1,57 @@
 body {
-    font-family: sans-serif;
+    font-family: Arial, sans-serif;
     margin: 0;
     padding: 20px;
     background-color: #f4f4f4;
-    display: flex;
-    justify-content: center;
-    align-items: flex-start;
-    min-height: 100vh;
+    color: #333;
 }
 
 .container {
+    max-width: 800px;
+    margin: 20px auto;
     background-color: #fff;
     padding: 30px;
     border-radius: 8px;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-    width: 100%;
-    max-width: 700px;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
 }
 
-h1 {
+h1, h2 {
+    color: #0056b3;
     text-align: center;
-    color: #333;
-    margin-bottom: 25px;
-}
-
-.tabs {
-    margin-top: 20px;
-}
-
-.tab-header {
-    display: flex;
-    border-bottom: 2px solid #ddd;
     margin-bottom: 20px;
-    overflow-x: auto;
-    white-space: nowrap;
-    padding-bottom: 5px;
+}
+
+.tab-buttons {
+    display: flex;
+    justify-content: center;
+    margin-bottom: 20px;
+    flex-wrap: wrap; /* ボタンが多すぎる場合に折り返す */
 }
 
 .tab-button {
-    background-color: #eee;
+    background-color: #e2e6ea;
+    color: #0056b3;
     border: none;
     padding: 10px 15px;
     cursor: pointer;
+    margin: 5px;
+    border-radius: 5px;
+    transition: background-color 0.3s ease, color 0.3s ease;
     font-size: 16px;
-    transition: background-color 0.3s ease;
-    border-radius: 5px 5px 0 0;
-    margin-right: 5px;
-    flex-shrink: 0;
 }
 
 .tab-button:hover {
-    background-color: #ddd;
+    background-color: #d1d6db;
 }
 
 .tab-button.active {
-    background-color: #007bff;
+    background-color: #0056b3;
     color: white;
-    border-bottom: 2px solid #007bff;
-    margin-bottom: -2px;
 }
 
 .tab-content {
     display: none;
-    padding: 15px 0;
+    padding: 20px 0;
     border-top: 1px solid #eee;
 }
 
@@ -76,158 +65,158 @@ h1 {
 
 .input-group {
     display: flex;
-    flex-wrap: wrap;
     align-items: center;
-    margin-bottom: 15px;
-    border: 1px solid #eee;
-    padding: 10px;
-    border-radius: 5px;
-    background-color: #fcfcfc;
+    margin-bottom: 10px;
+    flex-wrap: wrap; /* 小さい画面で折り返す */
 }
 
 .input-group label {
-    flex-basis: 100%;
-    margin-right: 0;
-    margin-bottom: 8px;
+    flex: 1;
+    min-width: 150px; /* ラベルの最小幅 */
+    margin-right: 10px;
     font-weight: bold;
-    color: #444;
-    text-align: left;
-    font-size: 15px;
+    color: #555;
 }
 
 .input-group input[type="number"] {
-    width: 100px;
-    padding: 10px;
+    flex: 2;
+    padding: 8px;
     border: 1px solid #ccc;
     border-radius: 4px;
-    font-size: 16px;
-    margin-right: 5px;
+    max-width: 200px; /* 入力フィールドの最大幅 */
+    margin-right: 10px;
 }
 
-.input-group select {
-    padding: 8px 5px;
+.input-group .unit-select {
+    padding: 8px;
     border: 1px solid #ccc;
     border-radius: 4px;
-    font-size: 14px;
-    margin-right: 5px;
-    width: 65px;
-    flex-shrink: 0;
+    margin-right: 10px;
 }
 
 .input-group .multiplier-display {
-    margin-right: 0;
-    color: #666;
-    font-size: 14px;
-    flex-shrink: 0;
-    padding-left: 0;
+    color: #888;
+    font-size: 0.9em;
+    white-space: nowrap; /* 折り返さない */
 }
 
-/* ここを修正 */
-.button-group {
-    display: flex;
-    justify-content: center; /* 中央揃えに */
-    align-items: center;
+.total-section {
+    font-size: 1.2em;
+    font-weight: bold;
     margin-top: 20px;
-    margin-bottom: 20px;
-    /* padding: 0 10px; は不要か、必要に応じて調整 */
-    gap: 20px; /* ボタン間のスペース */
+    padding-top: 10px;
+    border-top: 1px dashed #ccc;
+    text-align: right;
+    color: #0056b3;
 }
 
-.reset-button,
-.ok-button {
-    width: 100px;
-    padding: 10px 15px;
-    border: none;
-    border-radius: 5px;
-    font-size: 16px;
-    cursor: pointer;
-    transition: background-color 0.3s ease;
-    flex-grow: 0;
-    flex-shrink: 0;
-    text-align: center;
-    white-space: nowrap;
-}
-
-.reset-button {
-    background-color: #dc3545;
+button {
+    background-color: #007bff;
     color: white;
+    border: none;
+    padding: 10px 20px;
+    margin-top: 20px;
+    margin-right: 10px;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 1em;
+    transition: background-color 0.3s ease;
 }
 
-.reset-button:hover {
+button:hover {
+    background-color: #0056b3;
+}
+
+button[onclick^="reset"] {
+    background-color: #dc3545;
+}
+
+button[onclick^="reset"]:hover {
     background-color: #c82333;
 }
 
-.ok-button {
-    background-color: #007bff;
-    color: white;
-}
-
-.ok-button:hover {
-    background-color: #0056b3;
-}
-/* 修正ここまで */
-
-.total-display {
-    font-size: 20px;
-    font-weight: bold;
-    text-align: right;
-    margin-top: 30px;
-    padding-top: 15px;
-    border-top: 2px solid #ddd;
+/* アコーディオンスタイル */
+.accordion-header {
+    background-color: #f0f0f0;
     color: #333;
+    cursor: pointer;
+    padding: 15px;
+    width: 100%;
+    border: none;
+    text-align: left;
+    outline: none;
+    font-size: 18px;
+    transition: background-color 0.3s ease;
+    border-radius: 5px;
+    margin-bottom: 10px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
 }
 
-.total-display span {
-    color: #007bff;
-    margin-left: 10px;
+.accordion-header:hover {
+    background-color: #e0e0e0;
 }
 
-/* スマホ表示時の調整 */
+.accordion-header::after {
+    content: '\02795'; /* プラス記号 */
+    font-size: 13px;
+    color: #777;
+    float: right;
+    margin-left: 5px;
+    transition: transform 0.3s ease;
+}
+
+.accordion-header.active::after {
+    content: '\2796'; /* マイナス記号 */
+    transform: rotate(0deg); /* 不要だが残す */
+}
+
+.accordion-content {
+    padding: 0 18px;
+    background-color: white;
+    max-height: 0;
+    overflow: hidden;
+    transition: max-height 0.3s ease-out;
+    border-left: 1px solid #ddd;
+    border-right: 1px solid #ddd;
+    border-bottom: 1px solid #ddd;
+    border-radius: 0 0 5px 5px;
+    margin-bottom: 10px;
+}
+
+.accordion-content.show {
+    max-height: 1000px; /* 内容に合わせて調整が必要 */
+    transition: max-height 0.5s ease-in;
+}
+
+/* アコーディオン内のinput-groupの調整 */
+.accordion-content .input-group {
+    padding-left: 10px; /* インデント */
+}
+
+/* スマホ表示の調整 */
 @media (max-width: 600px) {
     .container {
-        padding: 15px;
+        padding: 20px;
     }
+
     .tab-button {
+        flex: 1 1 auto; /* 小さい画面でボタンを均等に配置 */
+        margin: 5px 2px;
         font-size: 14px;
-        padding: 8px 10px;
     }
+
     .input-group {
         flex-direction: column;
         align-items: flex-start;
     }
-    .input-group label {
-        margin-bottom: 5px;
-        flex-basis: auto;
-    }
-    .input-group input[type="number"] {
-        width: calc(100% - 15px);
-        margin-right: 0;
-        margin-bottom: 10px;
-    }
-    .input-group select {
-        width: calc(100% - 15px);
-        margin-left: 0;
-        margin-top: 0;
-        margin-bottom: 10px;
-    }
-    .input-group .multiplier-display {
-        margin-left: 0;
-        margin-right: 0;
-        margin-top: 5px;
+
+    .input-group label,
+    .input-group input[type="number"],
+    .input-group .unit-select {
         width: 100%;
-        text-align: left;
-    }
-    .button-group {
-        flex-direction: column;
-        align-items: center;
-        gap: 10px; /* スマホ時のボタン間のスペース */
-    }
-    .reset-button,
-    .ok-button {
-        width: 80%;
-        margin-bottom: 0; /* 縦並びなので個別のマージンは不要 */
-    }
-    .total-display {
-        text-align: left;
+        margin-right: 0;
+        margin-bottom: 8px;
     }
 }
