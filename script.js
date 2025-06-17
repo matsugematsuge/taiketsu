@@ -37,7 +37,10 @@ async function loadMultipliers() {
             "none": 1.0,
             "K": 1000.0,
             "M": 1000000.0,
-            "G": 100000000.0
+            "G": 1000000000.0,
+            "minute": 1.0,
+            "hour": 60.0,
+            "day": 1440.0
         };
         multipliersData = {
             "monday": {
@@ -52,15 +55,15 @@ async function loadMultipliers() {
                 "チップ宝箱の開封でチップ材料(上級)を1点獲得": { "multiplier": 2812.5, "default_unit": "none" }
             },
             "tuesday": {
-                "建造の残り時間を1分短縮する": { "multiplier": 150.0, "default_unit": "none" },
+                "建造の残り時間を1分短縮する": { "multiplier": 150.0, "default_unit": "none", "input_unit_type": "time" },
                 "施設建設で戦力を1獲得する": { "multiplier": 30.0, "default_unit": "none" },
                 "UR貿易輸送車を1回発車する": { "multiplier": 300000.0, "default_unit": "none" },
                 "UR極秘任務を1回遂行する": { "multiplier": 225000.0, "default_unit": "none" },
                 "生存者募集を1回行う": { "multiplier": 4500.0, "default_unit": "none" }
             },
             "wednesday": {
-                "科学研究の残り時間を1分短縮する": { "multiplier": 150.0, "default_unit": "none" },
-                "科学研究で戦力を1獲得する": { "multiplier": 30.0, "default_unit": "none" },
+                "科学研究の残り時間を1分短縮する": { "multiplier": 150.0, "default_unit": "none", "input_unit_type": "time" },
+                "施設建設で戦力を1獲得する": { "multiplier": 30.0, "default_unit": "none" },
                 "知恵の勲章を1枚消費する": { "multiplier": 750.0, "default_unit": "none" },
                 "レーダークエストを1回クリアする": { "multiplier": 30000.0, "default_unit": "none" },
                 "Lv.1ドローン宝箱を開ける": { "multiplier": 2750.0, "default_unit": "none" },
@@ -82,11 +85,11 @@ async function loadMultipliers() {
             },
             "friday": {
                 "レーダークエストを1回クリアする": { "multiplier": 30000.0, "default_unit": "none" },
-                "建造の残り時間を1分短縮する": { "multiplier": 150.0, "default_unit": "none" },
+                "建造の残り時間を1分短縮する": { "multiplier": 150.0, "default_unit": "none", "input_unit_type": "time" },
                 "施設建設で戦力を1獲得する": { "multiplier": 30.0, "default_unit": "none" },
-                "科学研究の残り時間を1分短縮する": { "multiplier": 150.0, "default_unit": "none" },
+                "科学研究の残り時間を1分短縮する": { "multiplier": 150.0, "default_unit": "none", "input_unit_type": "time" },
                 "科学研究で戦力を1獲得する": { "multiplier": 30.0, "default_unit": "none" },
-                "訓練の残り時間を1分短縮する": { "multiplier": 150.0, "default_unit": "none" },
+                "訓練の残り時間を1分短縮する": { "multiplier": 150.0, "default_unit": "none", "input_unit_type": "time" },
                 "LV.1兵士を1人訓練する": { "multiplier": 60.0, "default_unit": "none" },
                 "LV.2兵士を1人訓練する": { "multiplier": 90.0, "default_unit": "none" },
                 "LV.3兵士を1人訓練する": { "multiplier": 120.0, "default_unit": "none" },
@@ -106,10 +109,10 @@ async function loadMultipliers() {
             "saturday": {
                 "UR貿易輸送車を1回発車する": { "multiplier": 300000.0, "default_unit": "none" },
                 "UR極秘任務を1回遂行する": { "multiplier": 225000.0, "default_unit": "none" },
-                "建造の残り時間を1分短縮する": { "multiplier": 150.0, "default_unit": "none" },
-                "科学研究の残り時間を1分短縮する": { "multiplier": 150.0, "default_unit": "none" },
-                "訓練の残り時間を1分短縮する": { "multiplier": 150.0, "default_unit": "none" },
-                "治療の残り時間を1分短縮する": { "multiplier": 150.0, "default_unit": "none" },
+                "建造の残り時間を1分短縮する": { "multiplier": 150.0, "default_unit": "none", "input_unit_type": "time" },
+                "科学研究の残り時間を1分短縮する": { "multiplier": 150.0, "default_unit": "none", "input_unit_type": "time" },
+                "訓練の残り時間を1分短縮する": { "multiplier": 150.0, "default_unit": "none", "input_unit_type": "time" },
+                "治療の残り時間を1分短縮する": { "multiplier": 150.0, "default_unit": "none", "input_unit_type": "time" },
                 "相手連盟のLv.1兵士を1体撃破する": { "multiplier": 30.0, "default_unit": "none" },
                 "相手連盟のLv.2兵士を1体撃破": { "multiplier": 45.0, "default_unit": "none" },
                 "相手連盟のLv.3兵士を1体撃破する": { "multiplier": 60.0, "default_unit": "none" },
@@ -176,13 +179,30 @@ function generateInputForms() {
             
             // 入力値の単位選択ドロップダウン
             let unitSelectHtml = '';
-            // per_value があり、かつK, M, Gの単位選択肢がある場合のみ表示
-            // これにより、英雄Expや訓練ノートの入力値に単位を付けられるようになる
-            if (itemData.per_value && Object.keys(unitFactors).some(unit => unit !== 'none')) {
+            let unitOptionsToDisplay = [];
+
+            if (itemData.per_value && Object.keys(unitFactors).some(unit => ['K', 'M', 'G'].includes(unit))) {
+                // per_valueがあり、かつK, M, Gの単位がunitFactorsにある場合
+                unitOptionsToDisplay = ['none', 'K', 'M', 'G'].filter(unit => unitFactors.hasOwnProperty(unit));
+            } else if (itemData.input_unit_type === "time" && Object.keys(unitFactors).some(unit => ['minute', 'hour', 'day'].includes(unit))) {
+                // input_unit_typeが"time"であり、かつ時間単位がunitFactorsにある場合
+                unitOptionsToDisplay = ['minute', 'hour', 'day'].filter(unit => unitFactors.hasOwnProperty(unit));
+            }
+
+            if (unitOptionsToDisplay.length > 0) {
                 let unitSelectOptions = '';
-                for (const unit in unitFactors) {
-                    unitSelectOptions += `<option value="${unit}">${unit.toUpperCase()}</option>`;
-                }
+                unitOptionsToDisplay.forEach(unit => {
+                    // ドロップダウンの表示名を調整（例: "minute" -> "分"）
+                    let displayUnitName;
+                    switch (unit) {
+                        case 'minute': displayUnitName = '分'; break;
+                        case 'hour': displayUnitName = '時間'; break;
+                        case 'day': displayUnitName = '日'; break;
+                        case 'none': displayUnitName = 'なし'; break;
+                        default: displayUnitName = unit.toUpperCase(); break;
+                    }
+                    unitSelectOptions += `<option value="${unit}">${displayUnitName}</option>`;
+                });
                 unitSelectHtml = `
                     <select id="unitInputSelect_${itemKey}_${day}" class="unit-select">
                         ${unitSelectOptions}
@@ -211,7 +231,17 @@ function generateInputForms() {
             const unitInputSelect = document.getElementById(`unitInputSelect_${itemKey}_${day}`);
             if (unitInputSelect) {
                 // localStorageからinputの単位を復元、なければ'none'をデフォルトとする
-                unitInputSelect.value = localStorage.getItem(`unit_input_${itemKey}_${day}`) || 'none';
+                const storedUnit = localStorage.getItem(`unit_input_${itemKey}_${day}`);
+                if (storedUnit !== null) {
+                    unitInputSelect.value = storedUnit;
+                } else {
+                    // input_unit_typeが"time"の場合は"minute"をデフォルトに設定
+                    if (itemData.input_unit_type === "time") {
+                        unitInputSelect.value = 'minute';
+                    } else {
+                        unitInputSelect.value = 'none'; // それ以外は'none'
+                    }
+                }
                 // 単位が変更されたら再計算
                 unitInputSelect.addEventListener('change', () => calculateAndSave(day));
             }
@@ -276,7 +306,12 @@ function restoreInputsAndCalculateTotal(day) {
             if (storedInputUnit !== null) {
                 unitInputSelect.value = storedInputUnit;
             } else {
-                unitInputSelect.value = 'none'; // localStorageに値がない場合は'none'にする
+                // input_unit_typeが"time"の場合は"minute"をデフォルトにする
+                if (itemData.input_unit_type === "time") {
+                    unitInputSelect.value = 'minute';
+                } else {
+                    unitInputSelect.value = 'none'; // それ以外は'none'にする
+                }
             }
         }
     }
@@ -393,7 +428,13 @@ function resetInputs(day) {
         // 入力単位選択をリセット (プルダウンが存在する場合のみ)
         const unitInputSelect = document.getElementById(`unitInputSelect_${itemKey}_${day}`);
         if (unitInputSelect) {
-            unitInputSelect.value = 'none'; // 'none'にリセット
+            const itemData = dayItems[itemKey];
+            // input_unit_typeが"time"の場合は"minute"にリセット、それ以外は'none'
+            if (itemData.input_unit_type === "time") {
+                unitInputSelect.value = 'minute';
+            } else {
+                unitInputSelect.value = 'none';
+            }
             localStorage.removeItem(`unit_input_${itemKey}_${day}`); // localStorageから値を削除
         }
     }
