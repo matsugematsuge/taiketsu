@@ -70,14 +70,15 @@ h1 {
     display: block;
 }
 
-h2 {
+/* 曜日ごとの項目見出しを削除したので、不要なスタイルを削除 */
+/* h2 {
     color: #555;
     margin-top: 0;
     margin-bottom: 20px;
     font-size: 20px;
     border-bottom: 1px solid #eee;
     padding-bottom: 10px;
-}
+} */
 
 .input-container {
     margin-bottom: 20px;
@@ -132,12 +133,55 @@ h2 {
 }
 
 /* ここから修正 */
+.button-group {
+    display: flex;
+    justify-content: space-between; /* 要素間に均等なスペース */
+    align-items: center;
+    margin-top: 20px;
+    margin-bottom: 20px; /* 合計表示との間隔 */
+    padding: 0 10px; /* 左右に少しパディング */
+}
+
+.reset-button,
+.ok-button {
+    width: 100px; /* 仮の幅。文字数に応じて調整 */
+    padding: 10px 15px; /* 左右のパディングを少し増やして幅を広げる */
+    border: none;
+    border-radius: 5px;
+    font-size: 16px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+    flex-grow: 0; /* 幅が拡大しないように */
+    flex-shrink: 0; /* 幅が縮小しないように */
+    text-align: center; /* テキスト中央寄せ */
+    white-space: nowrap; /* テキストの改行を防ぐ */
+}
+
 .reset-button {
+    background-color: #dc3545; /* 赤色 */
+    color: white;
+}
+
+.reset-button:hover {
+    background-color: #c82333; /* ホバーで少し濃い赤 */
+}
+
+.ok-button {
+    background-color: #007bff; /* 青色 (計算ボタンの代わり) */
+    color: white;
+}
+
+.ok-button:hover {
+    background-color: #0056b3; /* ホバーで少し濃い青 */
+}
+
+/* calculation-button は削除 */
+/* .calculate-button {
     display: block;
     width: 100px;
-    margin: 10px auto 20px auto; /* 上部のマージンを調整し、下部に少し余裕を持たせる */
+    margin: 20px auto;
     padding: 10px 20px;
-    background-color: #dc3545; /* 赤色 */
+    background-color: #28a745;
     color: white;
     border: none;
     border-radius: 5px;
@@ -146,9 +190,9 @@ h2 {
     transition: background-color 0.3s ease;
 }
 
-.reset-button:hover {
-    background-color: #c82333; /* ホバーで少し濃い赤 */
-}
+.calculate-button:hover {
+    background-color: #218838;
+} */
 /* 修正ここまで */
 
 .total-display {
@@ -201,9 +245,20 @@ h2 {
         width: 100%;
         text-align: left;
     }
-    .reset-button {
-        width: 80%; /* スマホでボタンの幅を調整 */
+    /* ここから修正 */
+    .button-group {
+        flex-direction: column; /* スマホでは縦並びにする */
+        align-items: center; /* 中央寄せ */
     }
+    .reset-button,
+    .ok-button {
+        width: 80%; /* スマホでボタンの幅を調整 */
+        margin-bottom: 10px; /* ボタン間にスペース */
+    }
+    .ok-button {
+        margin-bottom: 0; /* 最後のボタンの下マージンは不要 */
+    }
+    /* 修正ここまで */
     .total-display {
         text-align: left;
     }
