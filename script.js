@@ -174,7 +174,8 @@ function generateInputForms() {
             
             // multiplier-display の表示値（例: +2.5M）は default_unit に基づく
             const displayMultiplier = itemData.multiplier.toFixed(1);
-            const displayMultiplierUnit = itemData.default_unit !== 'none' ? itemData.default_unit.toUpperCase() : '';
+            // ここを変更: 単位を括弧内に表示しないように常に空にする
+            const displayMultiplierUnit = ''; 
             const multiplierDisplayContent = `(+<span id="multiplier${itemKey}_${day}">${displayMultiplier}${displayMultiplierUnit}</span>)`;
             
             // 入力値の単位選択ドロップダウン
@@ -184,16 +185,9 @@ function generateInputForms() {
             if (itemData.input_unit_type === "time") {
                 // input_unit_typeが"time"の場合、時間単位を選択できるようにする
                 unitOptionsToDisplay = ['minute', 'hour', 'day'].filter(unit => unitFactors.hasOwnProperty(unit));
-            } else if (itemData.input_unit_type === "quantity") {
-                // input_unit_typeが"quantity"の場合、K, M, G の単位を選択できるようにする
+            } else if (itemData.input_unit_type === "quantity" || itemData.per_value) {
+                // input_unit_typeが"quantity"の場合、またはper_valueがある場合、K, M, G の単位を選択できるようにする
                 unitOptionsToDisplay = ['K', 'M', 'G'].filter(unit => unitFactors.hasOwnProperty(unit));
-            } else {
-                // それ以外の項目で、もしper_valueがあり、かつK, M, Gの単位がunitFactorsにある場合（英雄Expなど）
-                // ただし、今回は英雄Expもinput_unit_type: "quantity"で対応するため、このelse ifは原則不要
-                // 旧来の per_value ロジックを残す場合はここに記載
-                // if (itemData.per_value && Object.keys(unitFactors).some(unit => ['K', 'M', 'G'].includes(unit))) {
-                //     unitOptionsToDisplay = ['K', 'M', 'G'].filter(unit => unitFactors.hasOwnProperty(unit));
-                // }
             }
 
             if (unitOptionsToDisplay.length > 0) {
@@ -242,8 +236,8 @@ function generateInputForms() {
                     // デフォルト単位の設定ロジック
                     if (itemData.input_unit_type === "time") {
                         unitInputSelect.value = 'minute'; // 時間単位のデフォルトは「分」
-                    } else if (itemData.input_unit_type === "quantity") {
-                        unitInputSelect.value = 'K'; // 数量単位（K,M,G）のデフォルトは「K」
+                    } else if (itemData.input_unit_type === "quantity" || itemData.per_value) {
+                        unitInputSelect.value = 'K'; // 数量単位（K,M,G）またはper_valueがある場合のデフォルトは「K」
                     } else {
                         unitInputSelect.value = 'none'; // それ以外は'none'
                     }
@@ -315,8 +309,8 @@ function restoreInputsAndCalculateTotal(day) {
                 // デフォルト単位の設定ロジック
                 if (itemData.input_unit_type === "time") {
                     unitInputSelect.value = 'minute'; // 時間単位のデフォルトは「分」
-                } else if (itemData.input_unit_type === "quantity") {
-                    unitInputSelect.value = 'K'; // 数量単位（K,M,G）のデフォルトは「K」
+                } else if (itemData.input_unit_type === "quantity" || itemData.per_value) {
+                    unitInputSelect.value = 'K'; // 数量単位（K,M,G）またはper_valueがある場合のデフォルトは「K」
                 } else {
                     unitInputSelect.value = 'none'; // それ以外は'none'
                 }
@@ -362,7 +356,10 @@ function calculateTotal(day) {
             // 倍率自体に適用する単位係数
             const multiplierUnitFactor = unitFactors[multiplierDefaultUnit] || 1.0;
 
-            // 計算: ((入力値 * 入力単位係数) / per_value) * (基本倍率 * 倍率単位係数)
+            // 計算: ((inputValue * inputUnitFactor) / perValue) * (baseMultiplier * multiplierUnitFactor);
+            // perValueは計算には使用されるが、入力値自体の単位とは独立。
+            // inputValue * inputUnitFactor で実際の量に変換され、それを perValue で割って「何回分の操作に相当するか」を計算。
+            // その後、baseMultiplier * multiplierUnitFactor を掛ける。
             total += ((inputValue * inputUnitFactor) / perValue) * (baseMultiplier * multiplierUnitFactor);
         }
     }
@@ -440,8 +437,8 @@ function resetInputs(day) {
             // デフォルト単位の設定ロジックをリセット時にも適用
             if (itemData.input_unit_type === "time") {
                 unitInputSelect.value = 'minute'; // 時間単位のデフォルトは「分」
-            } else if (itemData.input_unit_type === "quantity") {
-                unitInputSelect.value = 'K'; // 数量単位（K,M,G）のデフォルトは「K」
+            } else if (itemData.input_unit_type === "quantity" || itemData.per_value) {
+                unitInputSelect.value = 'K'; // 数量単位（K,M,G）またはper_valueがある場合のデフォルトは「K」
             } else {
                 unitInputSelect.value = 'none'; // それ以外は'none'
             }
