@@ -201,16 +201,9 @@ function generateInputForms() {
             if (defaultUnit !== 'none') {
                 const unitSelect = document.getElementById(`unitSelect_${itemKey}_${day}`);
                 if (unitSelect) {
-                    const storedUnit = localStorage.getItem(`unit_${itemKey}_${day}`);
-                    unitSelect.value = storedUnit !== null ? storedUnit : defaultUnit;
-
-                    // 単位セレクタの変更時も自動で計算は行わない (OKボタンで計算するため)
-                    // unitSelect.addEventListener('change', () => {
-                    //     calculateTotal(day);
-                    // });
+                    // localStorageからの復元はopenTab/restoreInputsAndCalculateTotalで処理するため、ここでは行わない
+                    // unitSelect.value = storedUnit !== null ? storedUnit : defaultUnit;
                 }
-            } else {
-                // localStorage.setItem(`unit_${itemKey}_${day}`, 'none'); // デフォルト値の保存はOKボタンで
             }
         }
     });
@@ -238,11 +231,21 @@ function openTab(evt, tabName) {
     evt.currentTarget.classList.add("active");
 
     // タブが切り替わった際に、localStorageからデータを復元し、そのタブの合計を再計算する
+    // 今回の変更で、OKボタンで保存しないため、タブ切り替え時の復元は意味がなくなる。
+    // そのため、この関数は入力フィールドの値をクリアするようにも変更すべきだが、
+    // 「OKを押しても入力内容は保存しなくてよいです」という要望は、
+    // 「タブを切り替えても入力内容は残したいが、ページを閉じたらクリアされて良い」
+    // という意図と解釈し、ここではlocalStorageからの復元処理は残しておく。
+    // (ただし、OKで保存しないので、実際には常に空の状態からの復元になる)
     restoreInputsAndCalculateTotal(tabName);
 }
 
 /**
  * 指定された曜日の入力値と単位選択をlocalStorageから復元し、合計を計算し、表示を更新する関数
+ * 今回の修正でOKボタンでの保存を行わないため、この関数は実質的に
+ * localStorageに値があればそれを表示し、なければクリアするという挙動になります。
+ * ページを再読み込みした際に、前回保存された値は表示されますが、
+ * OKボタンを押してもその後の変更は保存されません。
  * @param {string} day - 処理対象の曜日 (例: 'monday')
  */
 function restoreInputsAndCalculateTotal(day) {
@@ -258,8 +261,8 @@ function restoreInputsAndCalculateTotal(day) {
         const inputElement = document.getElementById(`input${itemKey}_${day}`);
         if (inputElement && storedValue !== null) {
             inputElement.value = storedValue;
-        } else if (inputElement) { // localStorageに値がない場合は空にする
-            inputElement.value = '';
+        } else if (inputElement) {
+            inputElement.value = ''; // localStorageに値がない場合は空にする
         }
 
         // 単位選択状態の復元 (プルダウンが存在する場合のみ)
@@ -268,8 +271,8 @@ function restoreInputsAndCalculateTotal(day) {
             const unitSelect = document.getElementById(`unitSelect_${itemKey}_${day}`);
             if (unitSelect && storedUnit !== null) {
                 unitSelect.value = storedUnit;
-            } else if (unitSelect) { // localStorageに値がない場合はデフォルト単位にする
-                unitSelect.value = defaultUnit;
+            } else if (unitSelect) {
+                unitSelect.value = defaultUnit; // localStorageに値がない場合はデフォルト単位にする
             }
         }
     }
@@ -317,11 +320,11 @@ function calculateTotal(day) {
 }
 
 /**
- * 入力値を計算し、localStorageに保存する関数
- * OKボタンクリック時に実行される。
+ * 入力値を計算し、表示を更新する関数
+ * OKボタンクリック時に実行される。localStorageへの保存は行わない。
  * @param {string} day - 処理対象の曜日 (例: 'monday')
  */
-function calculateAndSave(day) {
+function calculateAndSave(day) { // 関数名を calculateAndUpdate などに変更しても良いが、HTMLのonclickも変える必要あり
     let total = 0;
     const dayItems = multipliersData[day];
 
@@ -350,17 +353,17 @@ function calculateAndSave(day) {
 
             total += (inputValue * unitFactor) * baseMultiplier;
 
-            // ここでlocalStorageに保存する
-            localStorage.setItem(`input${itemKey}_${day}`, inputValue);
-            if (unitSelect) { // プルダウンがある場合のみ単位も保存
-                localStorage.setItem(`unit_${itemKey}_${day}`, currentUnit);
-            } else { // プルダウンがない場合は"none"を保存
-                localStorage.setItem(`unit_${itemKey}_${day}`, 'none');
-            }
+            // ここでlocalStorageに保存する処理を削除
+            // localStorage.setItem(`input${itemKey}_${day}`, inputValue);
+            // if (unitSelect) {
+            //     localStorage.setItem(`unit_${itemKey}_${day}`, currentUnit);
+            // } else {
+            //     localStorage.setItem(`unit_${itemKey}_${day}`, 'none');
+            // }
         }
     }
     document.getElementById(`total_${day}`).textContent = total.toFixed(1).toLocaleString();
-    alert('入力内容が保存されました！'); // 保存されたことをユーザーに通知
+    // alert('計算が完了しました！'); // 保存のアラートは不要になる
 }
 
 
