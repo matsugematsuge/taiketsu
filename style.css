@@ -1,0 +1,152 @@
+body {
+    font-family: sans-serif;
+    margin: 0;
+    padding: 20px;
+    background-color: #f4f4f4;
+    display: flex;
+    justify-content: center;
+    align-items: flex-start;
+    min-height: 100vh;
+}
+
+.container {
+    background-color: #fff;
+    padding: 30px;
+    border-radius: 8px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    width: 100%;
+    max-width: 700px;
+}
+
+h1 {
+    text-align: center;
+    color: #333;
+    margin-bottom: 25px;
+}
+
+.tabs {
+    margin-top: 20px;
+}
+
+.tab-header {
+    display: flex;
+    border-bottom: 2px solid #ddd;
+    margin-bottom: 20px;
+    overflow-x: auto; /* タブが多い場合にスクロールできるように */
+    white-space: nowrap; /* タブが折り返さないように */
+    padding-bottom: 5px; /* 下線との隙間を調整 */
+}
+
+.tab-button {
+    background-color: #eee;
+    border: none;
+    padding: 10px 15px;
+    cursor: pointer;
+    font-size: 16px;
+    transition: background-color 0.3s ease;
+    border-radius: 5px 5px 0 0; /* 上部の角を丸く */
+    margin-right: 5px; /* タブ間のスペース */
+    flex-shrink: 0; /* タブが縮まないように */
+}
+
+.tab-button:hover {
+    background-color: #ddd;
+}
+
+.tab-button.active {
+    background-color: #007bff;
+    color: white;
+    border-bottom: 2px solid #007bff; /* アクティブなタブの下線 */
+    margin-bottom: -2px; /* 下線が重ならないように */
+}
+
+.tab-content {
+    display: none;
+    padding: 15px 0;
+    border-top: 1px solid #eee; /* タブコンテンツの上部に薄い線 */
+}
+
+.tab-content.active {
+    display: block;
+}
+
+h2 {
+    color: #555;
+    margin-top: 0;
+    margin-bottom: 20px;
+    font-size: 20px;
+    border-bottom: 1px solid #eee;
+    padding-bottom: 10px;
+}
+
+.input-group {
+    display: flex;
+    align-items: center;
+    margin-bottom: 15px;
+}
+
+.input-group label {
+    flex-basis: 50px; /* ラベルの幅を固定 */
+    margin-right: 10px;
+    font-weight: bold;
+    color: #444;
+}
+
+.input-group input[type="number"] {
+    flex-grow: 1; /* 入力欄を最大限に広げる */
+    padding: 10px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    font-size: 16px;
+    max-width: 200px; /* 入力欄の最大幅 */
+}
+
+.input-group .multiplier-display {
+    margin-left: 15px;
+    color: #666;
+    font-size: 14px;
+}
+
+.total-display {
+    font-size: 20px;
+    font-weight: bold;
+    text-align: right;
+    margin-top: 30px;
+    padding-top: 15px;
+    border-top: 2px solid #ddd;
+    color: #333;
+}
+
+.total-display span {
+    color: #007bff;
+    margin-left: 10px;
+}
+
+/* スマホ表示時の調整 */
+@media (max-width: 600px) {
+    .container {
+        padding: 15px;
+    }
+    .tab-button {
+        font-size: 14px;
+        padding: 8px 10px;
+    }
+    .input-group {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+    .input-group label {
+        margin-bottom: 5px;
+    }
+    .input-group input[type="number"] {
+        width: 100%;
+        max-width: none;
+    }
+    .input-group .multiplier-display {
+        margin-left: 0;
+        margin-top: 5px;
+    }
+    .total-display {
+        text-align: left;
+    }
+}
