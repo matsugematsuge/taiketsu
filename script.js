@@ -77,7 +77,7 @@ async function loadMultipliers() {
                 "UR英雄かけらを1枚消費する": { "multiplier": 25000.0, "default_unit": "none" },
                 "SSR英雄かけらを1枚消費する": { "multiplier": 8750.0, "default_unit": "none" },
                 "SR英雄かけらを1枚消費する": { "multiplier": 2500.0, "default_unit": "none" },
-                "スキルメダルを1枚消費する": { "multiplier": 30.0, "default_unit": "none" },
+                "スキルメダルを1枚消費する": { "multiplier": 30.0, "default_unit": "K" },
                 "専用武装のかけらを1枚消費する": { "multiplier": 25000.0, "default_unit": "none" }
             },
             "friday": {
@@ -152,6 +152,34 @@ async function loadMultipliers() {
     }
 }
 
+// アコーディオンのグループ定義
+const accordionGroups = {
+    "兵士を訓練する": [
+        "LV.1兵士を1人訓練する", "LV.2兵士を1人訓練する", "LV.3兵士を1人訓練する",
+        "LV.4兵士を1人訓練する", "LV.5兵士を1人訓練する", "LV.6兵士を1人訓練する",
+        "LV.7兵士を1人訓練する", "LV.8兵士を1人訓練する", "LV.9兵士を1人訓練する",
+        "LV.10兵士を1人訓練する"
+    ],
+    "相手連盟の兵士を撃破する": [
+        "相手連盟のLv.1兵士を1体撃破する", "相手連盟のLv.2兵士を1体撃破", "相手連盟のLv.3兵士を1体撃破する",
+        "相手連盟のLv.4兵士を1体撃破する", "相手連盟のLv.5兵士を1体撃破する", "相手連盟のLv.6兵士を1体撃破する",
+        "相手連盟のLv.7兵士を1体撃破する", "相手連盟のLv.8兵士を1体撃破する", "相手連盟のLv.9兵士を1体撃破する",
+        "相手連盟のLv.10兵士を1体撃破する"
+    ],
+    "兵士を撃破する": [
+        "Lv.1兵士を1体撃破する", "Lv.2兵士を1体撃破する", "Lv.3兵士を1体撃破する",
+        "Lv.4兵士を1体撃破する", "Lv.5兵士を1体撃破する", "Lv.6兵士を1体撃破する",
+        "v.7兵士を1体撃破する", "Lv.8兵士を1体撃破する", "Lv.9兵士を1体撃破する",
+        "Lv.10兵士を1体撃破する"
+    ],
+    "兵士を撃破される": [
+        "Lv.1兵士を1体撃破される", "Lv.2兵士を1体撃破される", "Lv.3兵士を1体撃破される",
+        "Lv.4兵士を1体撃破される", "Lv.5兵士を1体撃破される", "Lv.6兵士を1体撃破される",
+        "v.7兵士を1体撃破される", "Lv.8兵士を1体撃破される", "Lv.9兵士を1体撃破される",
+        "Lv.10兵士を1体撃破される"
+    ]
+};
+
 /**
  * multipliersDataを元に、各曜日の入力フォームを動的に生成する関数
  */
@@ -166,47 +194,118 @@ function generateInputForms() {
         const dayItems = multipliersData[day]; // その曜日の項目データ
         if (!dayItems) return;
 
-        for (const itemKey in dayItems) {
-            const itemData = dayItems[itemKey];
-            const multiplierValue = itemData.multiplier.toFixed(1); // 小数点以下1桁表示にフォーマット
-            const defaultUnit = itemData.default_unit || "none";
+        // 既にグループ化された項目を追跡するためのセット
+        const groupedItems = new Set();
 
-            const inputGroup = document.createElement('div');
-            inputGroup.classList.add('input-group');
+        // アコーディオンの生成
+        for (const groupTitle in accordionGroups) {
+            const groupItems = accordionGroups[groupTitle];
+            let hasItemsInGroup = false;
 
-            let unitSelectHtml = '';
-            if (defaultUnit !== 'none') {
-                let unitSelectOptions = '';
-                for (const unit in unitFactors) {
-                    if (unit !== 'none') {
-                        unitSelectOptions += `<option value="${unit}">${unit.toUpperCase()}</option>`;
-                    }
+            // その曜日にグループ内の項目が一つでもあるかチェック
+            for (const itemKey of groupItems) {
+                if (dayItems[itemKey]) {
+                    hasItemsInGroup = true;
+                    break;
                 }
-                unitSelectHtml = `
-                    <select id="unitSelect_${itemKey}_${day}" class="unit-select">
-                        ${unitSelectOptions}
-                    </select>
-                `;
             }
 
-            inputGroup.innerHTML = `
-                <label for="input${itemKey}_${day}">${itemKey}:</label>
-                <input type="number" id="input${itemKey}_${day}" value="" placeholder="数字を入力">
-                ${unitSelectHtml}
-                <span class="multiplier-display">(+<span id="multiplier${itemKey}_${day}">${multiplierValue}</span>)</span>
-            `;
-            inputContainer.appendChild(inputGroup);
+            if (hasItemsInGroup) {
+                const accordionHeader = document.createElement('button');
+                accordionHeader.classList.add('accordion-header');
+                accordionHeader.textContent = groupTitle;
+                inputContainer.appendChild(accordionHeader);
 
-            // ドロップダウンのデフォルト値とイベントリスナーを設定 (プルダウンが存在する場合のみ)
-            if (defaultUnit !== 'none') {
-                const unitSelect = document.getElementById(`unitSelect_${itemKey}_${day}`);
-                if (unitSelect) {
-                    // localStorageからの復元はopenTab/restoreInputsAndCalculateTotalで処理するため、ここでは行わない
+                const accordionContent = document.createElement('div');
+                accordionContent.classList.add('accordion-content');
+                inputContainer.appendChild(accordionContent);
+
+                accordionHeader.addEventListener('click', function() {
+                    this.classList.toggle('active');
+                    const content = this.nextElementSibling;
+                    if (content.classList.contains('show')) {
+                        content.classList.remove('show');
+                        content.style.maxHeight = null;
+                    } else {
+                        content.classList.add('show');
+                        content.style.maxHeight = content.scrollHeight + "px";
+                    }
+                });
+
+                groupItems.forEach(itemKey => {
+                    if (dayItems[itemKey]) {
+                        const itemData = dayItems[itemKey];
+                        const multiplierValue = itemData.multiplier.toFixed(1);
+                        const defaultUnit = itemData.default_unit || "none";
+
+                        const inputGroup = document.createElement('div');
+                        inputGroup.classList.add('input-group');
+
+                        let unitSelectHtml = '';
+                        if (defaultUnit !== 'none') {
+                            let unitSelectOptions = '';
+                            for (const unit in unitFactors) {
+                                if (unit !== 'none') {
+                                    unitSelectOptions += `<option value="${unit}">${unit.toUpperCase()}</option>`;
+                                }
+                            }
+                            unitSelectHtml = `
+                                <select id="unitSelect_${itemKey}_${day}" class="unit-select">
+                                    ${unitSelectOptions}
+                                </select>
+                            `;
+                        }
+
+                        inputGroup.innerHTML = `
+                            <label for="input${itemKey}_${day}">${itemKey}:</label>
+                            <input type="number" id="input${itemKey}_${day}" value="" placeholder="数字を入力">
+                            ${unitSelectHtml}
+                            <span class="multiplier-display">(+<span id="multiplier${itemKey}_${day}">${multiplierValue}</span>)</span>
+                        `;
+                        accordionContent.appendChild(inputGroup);
+                        groupedItems.add(itemKey); // グループ化された項目としてマーク
+                    }
+                });
+            }
+        }
+
+        // グループ化されていない残りの項目を生成
+        for (const itemKey in dayItems) {
+            if (!groupedItems.has(itemKey)) { // まだ生成されていない項目のみ
+                const itemData = dayItems[itemKey];
+                const multiplierValue = itemData.multiplier.toFixed(1);
+                const defaultUnit = itemData.default_unit || "none";
+
+                const inputGroup = document.createElement('div');
+                inputGroup.classList.add('input-group');
+
+                let unitSelectHtml = '';
+                if (defaultUnit !== 'none') {
+                    let unitSelectOptions = '';
+                    for (const unit in unitFactors) {
+                        if (unit !== 'none') {
+                            unitSelectOptions += `<option value="${unit}">${unit.toUpperCase()}</option>`;
+                        }
+                    }
+                    unitSelectHtml = `
+                        <select id="unitSelect_${itemKey}_${day}" class="unit-select">
+                            ${unitSelectOptions}
+                        </select>
+                    `;
                 }
+
+                inputGroup.innerHTML = `
+                    <label for="input${itemKey}_${day}">${itemKey}:</label>
+                    <input type="number" id="input${itemKey}_${day}" value="" placeholder="数字を入力">
+                    ${unitSelectHtml}
+                    <span class="multiplier-display">(+<span id="multiplier${itemKey}_${day}">${multiplierValue}</span>)</span>
+                `;
+                inputContainer.appendChild(inputGroup);
             }
         }
     });
 }
+
 
 /**
  * 曜日タブを切り替える関数
@@ -304,7 +403,6 @@ function calculateTotal(day) {
         }
     }
 
-    // ここを修正: Math.ceil()で小数点以下を繰り上げた後、toLocaleString()で桁区切り
     document.getElementById(`total_${day}`).textContent = Math.ceil(total).toLocaleString();
 }
 
@@ -341,11 +439,8 @@ function calculateAndSave(day) {
             const unitFactor = unitFactors[currentUnit] || 1.0;
 
             total += (inputValue * unitFactor) * baseMultiplier;
-
-            // localStorageに保存する処理は削除されたまま
         }
     }
-    // ここを修正: Math.ceil()で小数点以下を繰り上げた後、toLocaleString()で桁区切り
     document.getElementById(`total_${day}`).textContent = Math.ceil(total).toLocaleString();
 }
 
@@ -388,5 +483,4 @@ document.addEventListener('DOMContentLoaded', async () => {
 
     // 入力フィールドの変更時に自動計算しないようにイベントリスナーを削除
     // 代わりにOKボタンで calculateAndSave を呼び出す
-    // inputContainer.addEventListener('input', ... ) のブロックは削除
 });
