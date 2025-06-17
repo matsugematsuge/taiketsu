@@ -84,7 +84,6 @@ h2 {
     margin-bottom: 20px; /* 入力グループ全体の下に余白 */
 }
 
-/* ここから修正 */
 .input-group {
     display: flex;
     flex-wrap: wrap; /* 要素が収まらない場合に改行 */
@@ -106,15 +105,17 @@ h2 {
     font-size: 15px; /* フォントサイズを少し大きく */
 }
 
+/* ここから修正 */
 .input-group input[type="number"] {
-    flex-grow: 1; /* 入力欄を最大限に広げる */
+    /* flex-grow: 1; を削除またはコメントアウト */
+    width: 100px; /* 最大6桁程度の表示に固定 (必要に応じて調整) */
     padding: 10px;
     border: 1px solid #ccc;
     border-radius: 4px;
     font-size: 16px;
-    min-width: 120px; /* 最小幅を設定 */
     margin-right: 10px; /* 他の要素との間隔 */
 }
+/* 修正ここまで */
 
 /* 単位セレクタのスタイル */
 .input-group select {
@@ -134,8 +135,6 @@ h2 {
     flex-shrink: 0; /* 縮まないように */
     padding-left: 5px; /* 左側に少しパディング */
 }
-/* 修正ここまで */
-
 
 .calculate-button {
     display: block; /* ブロック要素にして単独で表示 */
@@ -154,7 +153,6 @@ h2 {
 .calculate-button:hover {
     background-color: #218838; /* ホバーで少し濃い緑 */
 }
-
 
 .total-display {
     font-size: 20px;
@@ -190,7 +188,7 @@ h2 {
     }
     .input-group input[type="number"] {
         width: calc(100% - 15px); /* 親要素の幅に合わせて調整 */
-        max-width: none;
+        /* max-width: none; を削除またはコメントアウト */
         margin-right: 0;
         margin-bottom: 10px; /* 入力欄の下にスペース */
     }
