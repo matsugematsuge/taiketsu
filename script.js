@@ -1,4 +1,4 @@
-// Še€–Ú‚Ì”{—¦‚ğ’è‹`
+// å„é …ç›®ã®å€ç‡ã‚’å®šç¾©
 const multipliers = {
     'A': 2500,
     'B': 1000,
@@ -6,60 +6,61 @@ const multipliers = {
 };
 
 /**
- * —j“úƒ^ƒu‚ğØ‚è‘Ö‚¦‚éŠÖ”
- * @param {Event} evt - ƒNƒŠƒbƒNƒCƒxƒ“ƒg
- * @param {string} tabName - •\¦‚·‚éƒ^ƒu‚ÌID (—á: 'monday')
+ * æ›œæ—¥ã‚¿ãƒ–ã‚’åˆ‡ã‚Šæ›¿ãˆã‚‹é–¢æ•°
+ * @param {Event} evt - ã‚¯ãƒªãƒƒã‚¯ã‚¤ãƒ™ãƒ³ãƒˆ
+ * @param {string} tabName - è¡¨ç¤ºã™ã‚‹ã‚¿ãƒ–ã®ID (ä¾‹: 'monday')
  */
 function openTab(evt, tabName) {
     let i, tabcontent, tablinks;
 
-    // ‘S‚Ä‚Ìƒ^ƒuƒRƒ“ƒeƒ“ƒc‚ğ”ñ•\¦‚É‚·‚é
+    // å…¨ã¦ã®ã‚¿ãƒ–ã‚³ãƒ³ãƒ†ãƒ³ãƒ„ã‚’éè¡¨ç¤ºã«ã™ã‚‹
     tabcontent = document.getElementsByClassName("tab-content");
     for (i = 0; i < tabcontent.length; i++) {
         tabcontent[i].classList.remove("active");
     }
 
-    // ‘S‚Ä‚Ìƒ^ƒuƒ{ƒ^ƒ“‚©‚ç 'active' ƒNƒ‰ƒX‚ğíœ‚·‚é
+    // å…¨ã¦ã®ã‚¿ãƒ–ãƒœã‚¿ãƒ³ã‹ã‚‰ 'active' ã‚¯ãƒ©ã‚¹ã‚’å‰Šé™¤ã™ã‚‹
     tablinks = document.getElementsByClassName("tab-button");
     for (i = 0; i < tablinks.length; i++) {
         tablinks[i].classList.remove("active");
     }
 
-    // w’è‚³‚ê‚½ƒ^ƒuƒRƒ“ƒeƒ“ƒc‚ğ•\¦‚µA‘Î‰‚·‚éƒ^ƒuƒ{ƒ^ƒ“‚ğƒAƒNƒeƒBƒu‚É‚·‚é
+    // æŒ‡å®šã•ã‚ŒãŸã‚¿ãƒ–ã‚³ãƒ³ãƒ†ãƒ³ãƒ„ã‚’è¡¨ç¤ºã—ã€å¯¾å¿œã™ã‚‹ã‚¿ãƒ–ãƒœã‚¿ãƒ³ã‚’ã‚¢ã‚¯ãƒ†ã‚£ãƒ–ã«ã™ã‚‹
     document.getElementById(tabName).classList.add("active");
     evt.currentTarget.classList.add("active");
 
-    // ƒ^ƒu‚ªØ‚è‘Ö‚í‚Á‚½Û‚ÉA‚»‚Ìƒ^ƒu‚Ì‡Œv‚ğÄŒvZ‚·‚é (‰Šú•\¦‚âƒf[ƒ^‚ªc‚Á‚Ä‚¢‚éê‡‚Ì‚½‚ß)
+    // ã‚¿ãƒ–ãŒåˆ‡ã‚Šæ›¿ã‚ã£ãŸéš›ã«ã€ãã®ã‚¿ãƒ–ã®åˆè¨ˆã‚’å†è¨ˆç®—ã™ã‚‹
+    // ã“ã‚Œã«ã‚ˆã‚Šã€ã‚¿ãƒ–ã‚’åˆ‡ã‚Šæ›¿ãˆãŸã¨ãã«æœ€æ–°ã®åˆè¨ˆãŒè¡¨ç¤ºã•ã‚Œã‚‹
     calculateTotal(tabName);
 }
 
 /**
- * w’è‚³‚ê‚½—j“ú‚Ì‡Œv‚ğŒvZ‚µA•\¦‚ğXV‚·‚éŠÖ”
- * @param {string} day - ŒvZ‘ÎÛ‚Ì—j“ú (—á: 'monday')
+ * æŒ‡å®šã•ã‚ŒãŸæ›œæ—¥ã®åˆè¨ˆã‚’è¨ˆç®—ã—ã€è¡¨ç¤ºã‚’æ›´æ–°ã™ã‚‹é–¢æ•°
+ * @param {string} day - è¨ˆç®—å¯¾è±¡ã®æ›œæ—¥ (ä¾‹: 'monday')
  */
 function calculateTotal(day) {
-    // Še“ü—ÍƒtƒB[ƒ‹ƒh‚©‚ç’l‚ğæ“¾B“ü—Í‚ª‚È‚¢ê‡‚Í0‚Æ‚µ‚Äˆµ‚¤
+    // å„å…¥åŠ›ãƒ•ã‚£ãƒ¼ãƒ«ãƒ‰ã‹ã‚‰å€¤ã‚’å–å¾—ã€‚å…¥åŠ›ãŒãªã„å ´åˆã¯0ã¨ã—ã¦æ‰±ã†
     const inputA = parseFloat(document.getElementById(`inputA_${day}`).value) || 0;
     const inputB = parseFloat(document.getElementById(`inputB_${day}`).value) || 0;
     const inputC = parseFloat(document.getElementById(`inputC_${day}`).value) || 0;
 
-    // ”{—¦‚ğ“K—p‚µ‚Ä‡Œv‚ğŒvZ
+    // å€ç‡ã‚’é©ç”¨ã—ã¦åˆè¨ˆã‚’è¨ˆç®—
     const total = (inputA * multipliers.A) + (inputB * multipliers.B) + (inputC * multipliers.C);
 
-    // ŒvZŒ‹‰Ê‚ğ•\¦—v‘f‚ÉƒZƒbƒg
-    document.getElementById(`total_${day}`).textContent = total.toLocaleString(); // ƒJƒ“ƒ}‹æØ‚è‚Å•\¦
+    // è¨ˆç®—çµæœã‚’è¡¨ç¤ºè¦ç´ ã«ã‚»ãƒƒãƒˆ
+    document.getElementById(`total_${day}`).textContent = total.toLocaleString(); // ã‚«ãƒ³ãƒåŒºåˆ‡ã‚Šã§è¡¨ç¤º
     
-    // “ü—Í’l‚ğlocalStorage‚É•Û‘¶ (ƒuƒ‰ƒEƒU‚ğ•Â‚¶‚Ä‚àƒf[ƒ^‚ğ•Û‚·‚é‚½‚ß)
+    // å…¥åŠ›å€¤ã‚’localStorageã«ä¿å­˜ (ãƒ–ãƒ©ã‚¦ã‚¶ã‚’é–‰ã˜ã¦ã‚‚ãƒ‡ãƒ¼ã‚¿ã‚’ä¿æŒã™ã‚‹ãŸã‚)
     localStorage.setItem(`inputA_${day}`, inputA);
     localStorage.setItem(`inputB_${day}`, inputB);
     localStorage.setItem(`inputC_${day}`, inputC);
 }
 
 /**
- * ƒy[ƒWƒ[ƒh‚ÉÀs‚³‚ê‚é‰Šú‰»ˆ—
+ * ãƒšãƒ¼ã‚¸ãƒ­ãƒ¼ãƒ‰æ™‚ã«å®Ÿè¡Œã•ã‚Œã‚‹åˆæœŸåŒ–å‡¦ç†
  */
 document.addEventListener('DOMContentLoaded', () => {
-    // ‘S‚Ä‚Ìƒ^ƒuƒRƒ“ƒeƒ“ƒc‚Ì“ü—Í’l‚ğlocalStorage‚©‚ç“Ç‚İ‚İA•\¦‚ÆŒvZ‚ğXV‚·‚é
+    // å…¨ã¦ã®ã‚¿ãƒ–ã‚³ãƒ³ãƒ†ãƒ³ãƒ„ã®å…¥åŠ›å€¤ã‚’localStorageã‹ã‚‰èª­ã¿è¾¼ã¿ã€è¡¨ç¤ºã™ã‚‹
     const days = ['monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday'];
     days.forEach(day => {
         const storedA = localStorage.getItem(`inputA_${day}`);
@@ -75,11 +76,11 @@ document.addEventListener('DOMContentLoaded', () => {
         if (storedC !== null) {
             document.getElementById(`inputC_${day}`).value = storedC;
         }
-        // Še—j“ú‚Ì‰ŠúŒvZ‚ğÀs
+        // åˆæœŸãƒ­ãƒ¼ãƒ‰æ™‚ã«ã¯ã€ä¿å­˜ã•ã‚Œã¦ã„ã‚‹å€¤ã«åŸºã¥ã„ã¦åˆè¨ˆã‚’è¨ˆç®—ãƒ»è¡¨ç¤º
+        // ã“ã‚ŒãŒãªã„ã¨ã€ãƒšãƒ¼ã‚¸ãƒ­ãƒ¼ãƒ‰æ™‚ã«å‰å›ã®åˆè¨ˆãŒè¡¨ç¤ºã•ã‚Œãªã„
         calculateTotal(day);
     });
 
-    // ƒy[ƒWƒ[ƒh‚ÉÅ‰‚Ìƒ^ƒuiŒ—j“új‚ğƒAƒNƒeƒBƒu‚É‚·‚é
-    // `click()` ƒCƒxƒ“ƒg‚ğ”­¶‚³‚¹‚é‚±‚Æ‚ÅAopenTabŠÖ”‚ªÀs‚³‚êAŒ—j“úƒ^ƒu‚ª•\¦‚³‚ê‚é
+    // ãƒšãƒ¼ã‚¸ãƒ­ãƒ¼ãƒ‰æ™‚ã«æœ€åˆã®ã‚¿ãƒ–ï¼ˆæœˆæ›œæ—¥ï¼‰ã‚’ã‚¢ã‚¯ãƒ†ã‚£ãƒ–ã«ã™ã‚‹
     document.querySelector('.tab-button.active').click();
 });
