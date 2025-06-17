@@ -8,12 +8,12 @@ async function loadMultipliers() {
     try {
         const response = await fetch('multipliers.json');
         if (!response.ok) {
-            throw new Error(`HTTP error! status: ${response.status}`);
+            throw new new Error(`HTTP error! status: ${response.status}`);
         }
         const data = await response.json();
         unitFactors = data.unit_factors; // 単位の調整倍率を保存
-        delete data.unit_factors;         // multipliersDataからはunit_factorsを除外
-        multipliersData = data;           // 残りのデータをmultipliersDataに保存
+        delete data.unit_factors;          // multipliersDataからはunit_factorsを除外
+        multipliersData = data;            // 残りのデータをmultipliersDataに保存
 
         console.log('倍率データを読み込みました:', multipliersData);
         console.log('単位調整倍率:', unitFactors);
@@ -32,7 +32,7 @@ async function loadMultipliers() {
     } catch (error) {
         console.error('倍率データの読み込み中にエラーが発生しました:', error);
         console.warn('デフォルトの倍率データを使用します。');
-        // エラー発生時のフォールバックデータ (Kを追加)
+        // エラー発生時のフォールバックデータ
         unitFactors = {
             "none": 1.0,
             "K": 1000.0,
@@ -43,7 +43,7 @@ async function loadMultipliers() {
             "monday": {
                 "APを1消費する": { "multiplier": 375.0, "default_unit": "none" },
                 "レーダークエストを1回クリアする": { "multiplier": 30000.0, "default_unit": "none" },
-                "一度に英雄Expを660以上消費する": { "multiplier": 2.5, "default_unit": "M" },
+                "一度に英雄Expを660以上消費する": { "multiplier": 2.5, "default_unit": "M", "per_value": 660.0 },
                 "ドローン戦闘データを1消費する": { "multiplier": 7.5, "default_unit": "K" },
                 "ドローンギアを1個消費する": { "multiplier": 6250.0, "default_unit": "none" },
                 "食料を100採集する": { "multiplier": 50.0, "default_unit": "none" },
@@ -73,11 +73,11 @@ async function loadMultipliers() {
             },
             "thursday": {
                 "英雄を1回募集する": { "multiplier": 4500.0, "default_unit": "none" },
-                "一度に英雄Expを660以上消費する": { "multiplier": 2.5, "default_unit": "M" },
+                "一度に英雄Expを660以上消費する": { "multiplier": 2.5, "default_unit": "M", "per_value": 660.0 },
                 "UR英雄かけらを1枚消費する": { "multiplier": 25000.0, "default_unit": "none" },
                 "SSR英雄かけらを1枚消費する": { "multiplier": 8750.0, "default_unit": "none" },
                 "SR英雄かけらを1枚消費する": { "multiplier": 2500.0, "default_unit": "none" },
-                "スキルメダルを1枚消費する": { "multiplier": 30.0, "default_unit": "none" },
+                "スキルメダルを1枚消費する": { "multiplier": 30.0, "default_unit": "K" },
                 "専用武装のかけらを1枚消費する": { "multiplier": 25000.0, "default_unit": "none" }
             },
             "friday": {
@@ -98,7 +98,7 @@ async function loadMultipliers() {
                 "LV.9兵士を1人訓練する": { "multiplier": 300.0, "default_unit": "none" },
                 "LV.10兵士を1人訓練する": { "multiplier": 330.0, "default_unit": "none" },
                 "ドミネーターのかけらを1枚消費する": { "multiplier": 25000.0, "default_unit": "none" },
-                "ドミネーターの訓練ノートを100個消費する": { "multiplier": 1562.5, "default_unit": "none" },
+                "ドミネーターの訓練ノートを100個消費する": { "multiplier": 1562.5, "default_unit": "none", "per_value": 100.0 },
                 "ドミネーターの訓練証明書を1枚消費する": { "multiplier": 3750.0, "default_unit": "none" },
                 "ドミネーターの連携の証を1枚消費する": { "multiplier": 75000.0, "default_unit": "none" },
                 "ドミネーターのスキルメダルを1枚消費する": { "multiplier": 12.5, "default_unit": "none" }
@@ -168,14 +168,16 @@ function generateInputForms() {
 
         for (const itemKey in dayItems) {
             const itemData = dayItems[itemKey];
-            const multiplierValue = itemData.multiplier.toFixed(1); // 小数点以下1桁表示にフォーマット
+            // per_valueがある場合は表示に含めない
+            const multiplierDisplayValue = itemData.per_value ? itemData.multiplier.toFixed(1) + (itemData.default_unit !== 'none' ? itemData.default_unit.toUpperCase() : '') : itemData.multiplier.toFixed(1);
             const defaultUnit = itemData.default_unit || "none";
 
             const inputGroup = document.createElement('div');
             inputGroup.classList.add('input-group');
 
             let unitSelectHtml = '';
-            if (defaultUnit !== 'none') {
+            // per_valueがある場合は単位選択を非表示にする
+            if (defaultUnit !== 'none' && !itemData.per_value) {
                 let unitSelectOptions = '';
                 for (const unit in unitFactors) {
                     if (unit !== 'none') {
@@ -189,16 +191,24 @@ function generateInputForms() {
                 `;
             }
 
+            // per_valueが存在する場合は「につきXポイント」という表示を追加
+            let labelText = itemKey;
+            if (itemData.per_value) {
+                const displayUnit = itemData.default_unit === 'none' ? '' : itemData.default_unit.toUpperCase();
+                labelText += ` (${itemData.per_value}につき)`;
+            }
+
+
             inputGroup.innerHTML = `
-                <label for="input${itemKey}_${day}">${itemKey}:</label>
+                <label for="input${itemKey}_${day}">${labelText}:</label>
                 <input type="number" id="input${itemKey}_${day}" value="" placeholder="数字を入力">
                 ${unitSelectHtml}
-                <span class="multiplier-display">(+<span id="multiplier${itemKey}_${day}">${multiplierValue}</span>)</span>
+                <span class="multiplier-display">(+<span id="multiplier${itemKey}_${day}">${multiplierDisplayValue}</span>)</span>
             `;
             inputContainer.appendChild(inputGroup);
 
             // ドロップダウンのデフォルト値とイベントリスナーを設定 (プルダウンが存在する場合のみ)
-            if (defaultUnit !== 'none') {
+            if (defaultUnit !== 'none' && !itemData.per_value) {
                 const unitSelect = document.getElementById(`unitSelect_${itemKey}_${day}`);
                 if (unitSelect) {
                     // localStorageからの復元はopenTab/restoreInputsAndCalculateTotalで処理するため、ここでは行わない
@@ -241,7 +251,7 @@ function restoreInputsAndCalculateTotal(day) {
     if (!dayItems) return;
 
     for (const itemKey in dayItems) {
-        const itemData = dayItems[itemKey];
+        const itemData = dayItems[itemKey]; // itemDataを取得
         const defaultUnit = itemData.default_unit || "none";
 
         // 入力値の復元
@@ -253,8 +263,8 @@ function restoreInputsAndCalculateTotal(day) {
             inputElement.value = ''; // localStorageに値がない場合は空にする
         }
 
-        // 単位選択状態の復元 (プルダウンが存在する場合のみ)
-        if (defaultUnit !== 'none') {
+        // 単位選択状態の復元 (プルダウンが存在し、per_valueがない場合のみ)
+        if (defaultUnit !== 'none' && !itemData.per_value) {
             const storedUnit = localStorage.getItem(`unit_${itemKey}_${day}`);
             const unitSelect = document.getElementById(`unitSelect_${itemKey}_${day}`);
             if (unitSelect && storedUnit !== null) {
@@ -286,9 +296,11 @@ function calculateTotal(day) {
         const itemData = dayItems[itemKey];
         const baseMultiplier = itemData.multiplier;
         const defaultUnit = itemData.default_unit || "none";
+        const perValue = itemData.per_value || 1.0; // per_valueがなければ1.0とする
 
         const inputElement = document.getElementById(`input${itemKey}_${day}`);
-        const unitSelect = (defaultUnit !== 'none') ? document.getElementById(`unitSelect_${itemKey}_${day}`) : null;
+        // per_valueがある場合は単位選択を使用しない
+        const unitSelect = (defaultUnit !== 'none' && !itemData.per_value) ? document.getElementById(`unitSelect_${itemKey}_${day}`) : null;
 
         if (inputElement) {
             const inputValue = parseFloat(inputElement.value) || 0;
@@ -300,17 +312,17 @@ function calculateTotal(day) {
             
             const unitFactor = unitFactors[currentUnit] || 1.0;
 
-            total += (inputValue * unitFactor) * baseMultiplier;
+            // per_valueを考慮した計算
+            total += ((inputValue / perValue) * unitFactor) * baseMultiplier;
         }
     }
 
-    // ここを修正: Math.ceil()で小数点以下を繰り上げた後、toLocaleString()で桁区切り
     document.getElementById(`total_${day}`).textContent = Math.ceil(total).toLocaleString();
 }
 
 /**
  * 入力値を計算し、表示を更新する関数
- * OKボタンクリック時に実行される。localStorageへの保存は行わない。
+ * OKボタンクリック時に実行される。localStorageへの保存も行う。
  * @param {string} day - 処理対象の曜日 (例: 'monday')
  */
 function calculateAndSave(day) {
@@ -326,9 +338,11 @@ function calculateAndSave(day) {
         const itemData = dayItems[itemKey];
         const baseMultiplier = itemData.multiplier;
         const defaultUnit = itemData.default_unit || "none";
+        const perValue = itemData.per_value || 1.0; // per_valueがなければ1.0とする
 
         const inputElement = document.getElementById(`input${itemKey}_${day}`);
-        const unitSelect = (defaultUnit !== 'none') ? document.getElementById(`unitSelect_${itemKey}_${day}`) : null;
+        // per_valueがある場合は単位選択を使用しない
+        const unitSelect = (defaultUnit !== 'none' && !itemData.per_value) ? document.getElementById(`unitSelect_${itemKey}_${day}`) : null;
 
         if (inputElement) {
             const inputValue = parseFloat(inputElement.value) || 0;
@@ -340,12 +354,16 @@ function calculateAndSave(day) {
             
             const unitFactor = unitFactors[currentUnit] || 1.0;
 
-            total += (inputValue * unitFactor) * baseMultiplier;
+            // per_valueを考慮した計算
+            total += ((inputValue / perValue) * unitFactor) * baseMultiplier;
 
-            // localStorageに保存する処理は削除されたまま
+            // localStorageに保存
+            localStorage.setItem(`input${itemKey}_${day}`, inputValue.toString());
+            if (unitSelect) {
+                localStorage.setItem(`unit_${itemKey}_${day}`, currentUnit);
+            }
         }
     }
-    // ここを修正: Math.ceil()で小数点以下を繰り上げた後、toLocaleString()で桁区切り
     document.getElementById(`total_${day}`).textContent = Math.ceil(total).toLocaleString();
 }
 
@@ -359,17 +377,19 @@ function resetInputs(day) {
     if (!dayItems) return;
 
     for (const itemKey in dayItems) {
+        const itemData = dayItems[itemKey]; // itemDataを取得
+        const defaultUnit = itemData.default_unit || "none";
+
         const inputElement = document.getElementById(`input${itemKey}_${day}`);
         if (inputElement) {
             inputElement.value = ''; // 入力フィールドをクリア
             localStorage.removeItem(`input${itemKey}_${day}`); // localStorageから値を削除
         }
 
-        const unitSelect = document.getElementById(`unitSelect_${itemKey}_${day}`);
+        // 単位選択をリセット (プルダウンが存在し、per_valueがない場合のみ)
+        const unitSelect = (defaultUnit !== 'none' && !itemData.per_value) ? document.getElementById(`unitSelect_${itemKey}_${day}`) : null;
         if (unitSelect) {
             // 初期値に戻す (JSONから読み込んだdefault_unit)
-            const itemData = dayItems[itemKey];
-            const defaultUnit = itemData.default_unit || "none";
             unitSelect.value = defaultUnit;
             localStorage.removeItem(`unit_${itemKey}_${day}`); // localStorageから値を削除
         }
