@@ -105,36 +105,34 @@ h2 {
 }
 
 /* ここを修正 */
-.input-group .multiplier-display {
-    /* order: -1; を削除 */
-    margin-left: auto; /* ここで右寄せに */
-    color: #666;
-    font-size: 14px;
-    flex-shrink: 0;
-    padding-left: 5px; /* 左側に少しパディング */
-    margin-right: 0; /* 右側のマージンは不要に */
-}
-
 .input-group input[type="number"] {
     width: 100px;
     padding: 10px;
     border: 1px solid #ccc;
     border-radius: 4px;
     font-size: 16px;
-    margin-right: 10px; /* 単位セレクタとの間隔 */
+    margin-right: 5px; /* 倍率表示との間隔を調整 */
 }
-/* 修正ここまで */
 
-/* 単位セレクタのスタイル */
 .input-group select {
     padding: 8px 5px;
     border: 1px solid #ccc;
     border-radius: 4px;
     font-size: 14px;
-    margin-right: 10px; /* 次の要素との間隔 */
+    margin-right: 5px; /* 倍率表示との間隔を調整 */
     width: 65px;
     flex-shrink: 0;
 }
+
+.input-group .multiplier-display {
+    /* margin-left: auto; を削除 */
+    margin-right: 0; /* 右寄せはせず、隣接要素とまとめるため0に */
+    color: #666;
+    font-size: 14px;
+    flex-shrink: 0;
+    padding-left: 0; /* 不要なパディングを削除 */
+}
+/* 修正ここまで */
 
 .calculate-button {
     display: block;
@@ -187,25 +185,25 @@ h2 {
         flex-basis: auto;
     }
     /* ここを修正 */
-    .input-group .multiplier-display {
-        margin-left: 0; /* 左寄せに戻す */
-        margin-right: 0;
-        margin-top: 5px;
-        width: 100%;
-        text-align: right; /* 右寄せにする */
-    }
     .input-group input[type="number"] {
         width: calc(100% - 15px);
         margin-right: 0;
         margin-bottom: 10px;
     }
-    /* 修正ここまで */
     .input-group select {
         width: calc(100% - 15px);
         margin-left: 0;
         margin-top: 0;
         margin-bottom: 10px;
     }
+    .input-group .multiplier-display {
+        margin-left: 0;
+        margin-right: 0; /* 右寄せではなくなるので0に */
+        margin-top: 5px;
+        width: 100%;
+        text-align: left; /* 左寄せに戻す */
+    }
+    /* 修正ここまで */
     .total-display {
         text-align: left;
     }
