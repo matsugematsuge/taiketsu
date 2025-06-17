@@ -8,7 +8,7 @@ async function loadMultipliers() {
     try {
         const response = await fetch('multipliers.json');
         if (!response.ok) {
-            throw new new Error(`HTTP error! status: ${response.status}`);
+            throw new Error(`HTTP error! status: ${response.status}`);
         }
         const data = await response.json();
         unitFactors = data.unit_factors; // 単位の調整倍率を保存
@@ -168,51 +168,58 @@ function generateInputForms() {
 
         for (const itemKey in dayItems) {
             const itemData = dayItems[itemKey];
-            // per_valueがある場合は表示に含めない
-            const multiplierDisplayValue = itemData.per_value ? itemData.multiplier.toFixed(1) + (itemData.default_unit !== 'none' ? itemData.default_unit.toUpperCase() : '') : itemData.multiplier.toFixed(1);
-            const defaultUnit = itemData.default_unit || "none";
-
-            const inputGroup = document.createElement('div');
-            inputGroup.classList.add('input-group');
-
+            
+            // multiplier-display の表示値（例: +2.5M）は default_unit に基づく
+            const displayMultiplier = itemData.multiplier.toFixed(1);
+            const displayMultiplierUnit = itemData.default_unit !== 'none' ? itemData.default_unit.toUpperCase() : '';
+            const multiplierDisplayContent = `(+<span id="multiplier${itemKey}_${day}">${displayMultiplier}${displayMultiplierUnit}</span>)`;
+            
+            // 入力値の単位選択ドロップダウン
             let unitSelectHtml = '';
-            // per_valueがある場合は単位選択を非表示にする
-            if (defaultUnit !== 'none' && !itemData.per_value) {
+            // per_value があり、かつK, M, Gの単位選択肢がある場合のみ表示
+            // これにより、英雄Expや訓練ノートの入力値に単位を付けられるようになる
+            if (itemData.per_value && Object.keys(unitFactors).some(unit => unit !== 'none')) {
                 let unitSelectOptions = '';
                 for (const unit in unitFactors) {
-                    if (unit !== 'none') {
-                        unitSelectOptions += `<option value="${unit}">${unit.toUpperCase()}</option>`;
-                    }
+                    unitSelectOptions += `<option value="${unit}">${unit.toUpperCase()}</option>`;
                 }
                 unitSelectHtml = `
-                    <select id="unitSelect_${itemKey}_${day}" class="unit-select">
+                    <select id="unitInputSelect_${itemKey}_${day}" class="unit-select">
                         ${unitSelectOptions}
                     </select>
                 `;
             }
 
-            // per_valueが存在する場合は「につきXポイント」という表示を追加
+            // ラベルテキスト (per_valueがある場合は「につきX」を追加)
             let labelText = itemKey;
             if (itemData.per_value) {
-                const displayUnit = itemData.default_unit === 'none' ? '' : itemData.default_unit.toUpperCase();
                 labelText += ` (${itemData.per_value}につき)`;
             }
 
+            const inputGroup = document.createElement('div');
+            inputGroup.classList.add('input-group');
 
             inputGroup.innerHTML = `
                 <label for="input${itemKey}_${day}">${labelText}:</label>
                 <input type="number" id="input${itemKey}_${day}" value="" placeholder="数字を入力">
                 ${unitSelectHtml}
-                <span class="multiplier-display">(+<span id="multiplier${itemKey}_${day}">${multiplierDisplayValue}</span>)</span>
+                <span class="multiplier-display">${multiplierDisplayContent}</span>
             `;
             inputContainer.appendChild(inputGroup);
 
             // ドロップダウンのデフォルト値とイベントリスナーを設定 (プルダウンが存在する場合のみ)
-            if (defaultUnit !== 'none' && !itemData.per_value) {
-                const unitSelect = document.getElementById(`unitSelect_${itemKey}_${day}`);
-                if (unitSelect) {
-                    // localStorageからの復元はopenTab/restoreInputsAndCalculateTotalで処理するため、ここでは行わない
-                }
+            const unitInputSelect = document.getElementById(`unitInputSelect_${itemKey}_${day}`);
+            if (unitInputSelect) {
+                // localStorageからinputの単位を復元、なければ'none'をデフォルトとする
+                unitInputSelect.value = localStorage.getItem(`unit_input_${itemKey}_${day}`) || 'none';
+                // 単位が変更されたら再計算
+                unitInputSelect.addEventListener('change', () => calculateAndSave(day));
+            }
+            
+            // 入力フィールドの変更時にも再計算
+            const inputElement = document.getElementById(`input${itemKey}_${day}`);
+            if (inputElement) {
+                inputElement.addEventListener('input', () => calculateAndSave(day));
             }
         }
     });
@@ -251,8 +258,7 @@ function restoreInputsAndCalculateTotal(day) {
     if (!dayItems) return;
 
     for (const itemKey in dayItems) {
-        const itemData = dayItems[itemKey]; // itemDataを取得
-        const defaultUnit = itemData.default_unit || "none";
+        const itemData = dayItems[itemKey]; 
 
         // 入力値の復元
         const storedValue = localStorage.getItem(`input${itemKey}_${day}`);
@@ -263,14 +269,14 @@ function restoreInputsAndCalculateTotal(day) {
             inputElement.value = ''; // localStorageに値がない場合は空にする
         }
 
-        // 単位選択状態の復元 (プルダウンが存在し、per_valueがない場合のみ)
-        if (defaultUnit !== 'none' && !itemData.per_value) {
-            const storedUnit = localStorage.getItem(`unit_${itemKey}_${day}`);
-            const unitSelect = document.getElementById(`unitSelect_${itemKey}_${day}`);
-            if (unitSelect && storedUnit !== null) {
-                unitSelect.value = storedUnit;
-            } else if (unitSelect) {
-                unitSelect.value = defaultUnit; // localStorageに値がない場合はデフォルト単位にする
+        // 入力単位選択状態の復元 (プルダウンが存在する場合のみ)
+        const unitInputSelect = document.getElementById(`unitInputSelect_${itemKey}_${day}`);
+        if (unitInputSelect) {
+            const storedInputUnit = localStorage.getItem(`unit_input_${itemKey}_${day}`);
+            if (storedInputUnit !== null) {
+                unitInputSelect.value = storedInputUnit;
+            } else {
+                unitInputSelect.value = 'none'; // localStorageに値がない場合は'none'にする
             }
         }
     }
@@ -295,25 +301,26 @@ function calculateTotal(day) {
     for (const itemKey in dayItems) {
         const itemData = dayItems[itemKey];
         const baseMultiplier = itemData.multiplier;
-        const defaultUnit = itemData.default_unit || "none";
-        const perValue = itemData.per_value || 1.0; // per_valueがなければ1.0とする
+        const multiplierDefaultUnit = itemData.default_unit || "none"; // multiplier自身の単位
+        const perValue = itemData.per_value || 1.0; 
 
         const inputElement = document.getElementById(`input${itemKey}_${day}`);
-        // per_valueがある場合は単位選択を使用しない
-        const unitSelect = (defaultUnit !== 'none' && !itemData.per_value) ? document.getElementById(`unitSelect_${itemKey}_${day}`) : null;
+        const unitInputSelect = document.getElementById(`unitInputSelect_${itemKey}_${day}`); // 入力値に適用する単位選択
 
         if (inputElement) {
             const inputValue = parseFloat(inputElement.value) || 0;
-            let currentUnit = defaultUnit;
-
-            if (unitSelect) {
-                currentUnit = unitSelect.value;
+            
+            // 入力値に適用する単位係数
+            let inputUnitFactor = 1.0;
+            if (unitInputSelect) {
+                inputUnitFactor = unitFactors[unitInputSelect.value] || 1.0;
             }
             
-            const unitFactor = unitFactors[currentUnit] || 1.0;
+            // 倍率自体に適用する単位係数
+            const multiplierUnitFactor = unitFactors[multiplierDefaultUnit] || 1.0;
 
-            // per_valueを考慮した計算
-            total += ((inputValue / perValue) * unitFactor) * baseMultiplier;
+            // 計算: ((入力値 * 入力単位係数) / per_value) * (基本倍率 * 倍率単位係数)
+            total += ((inputValue * inputUnitFactor) / perValue) * (baseMultiplier * multiplierUnitFactor);
         }
     }
 
@@ -337,30 +344,30 @@ function calculateAndSave(day) {
     for (const itemKey in dayItems) {
         const itemData = dayItems[itemKey];
         const baseMultiplier = itemData.multiplier;
-        const defaultUnit = itemData.default_unit || "none";
-        const perValue = itemData.per_value || 1.0; // per_valueがなければ1.0とする
+        const multiplierDefaultUnit = itemData.default_unit || "none";
+        const perValue = itemData.per_value || 1.0;
 
         const inputElement = document.getElementById(`input${itemKey}_${day}`);
-        // per_valueがある場合は単位選択を使用しない
-        const unitSelect = (defaultUnit !== 'none' && !itemData.per_value) ? document.getElementById(`unitSelect_${itemKey}_${day}`) : null;
+        const unitInputSelect = document.getElementById(`unitInputSelect_${itemKey}_${day}`);
 
         if (inputElement) {
             const inputValue = parseFloat(inputElement.value) || 0;
-            let currentUnit = defaultUnit;
-
-            if (unitSelect) {
-                currentUnit = unitSelect.value;
+            
+            let inputUnitFactor = 1.0;
+            let currentInputUnit = 'none';
+            if (unitInputSelect) {
+                currentInputUnit = unitInputSelect.value;
+                inputUnitFactor = unitFactors[currentInputUnit] || 1.0;
             }
             
-            const unitFactor = unitFactors[currentUnit] || 1.0;
+            const multiplierUnitFactor = unitFactors[multiplierDefaultUnit] || 1.0;
 
-            // per_valueを考慮した計算
-            total += ((inputValue / perValue) * unitFactor) * baseMultiplier;
+            total += ((inputValue * inputUnitFactor) / perValue) * (baseMultiplier * multiplierUnitFactor);
 
             // localStorageに保存
             localStorage.setItem(`input${itemKey}_${day}`, inputValue.toString());
-            if (unitSelect) {
-                localStorage.setItem(`unit_${itemKey}_${day}`, currentUnit);
+            if (unitInputSelect) { // 入力単位選択が存在する場合のみ保存
+                localStorage.setItem(`unit_input_${itemKey}_${day}`, currentInputUnit);
             }
         }
     }
@@ -377,21 +384,17 @@ function resetInputs(day) {
     if (!dayItems) return;
 
     for (const itemKey in dayItems) {
-        const itemData = dayItems[itemKey]; // itemDataを取得
-        const defaultUnit = itemData.default_unit || "none";
-
         const inputElement = document.getElementById(`input${itemKey}_${day}`);
         if (inputElement) {
             inputElement.value = ''; // 入力フィールドをクリア
             localStorage.removeItem(`input${itemKey}_${day}`); // localStorageから値を削除
         }
 
-        // 単位選択をリセット (プルダウンが存在し、per_valueがない場合のみ)
-        const unitSelect = (defaultUnit !== 'none' && !itemData.per_value) ? document.getElementById(`unitSelect_${itemKey}_${day}`) : null;
-        if (unitSelect) {
-            // 初期値に戻す (JSONから読み込んだdefault_unit)
-            unitSelect.value = defaultUnit;
-            localStorage.removeItem(`unit_${itemKey}_${day}`); // localStorageから値を削除
+        // 入力単位選択をリセット (プルダウンが存在する場合のみ)
+        const unitInputSelect = document.getElementById(`unitInputSelect_${itemKey}_${day}`);
+        if (unitInputSelect) {
+            unitInputSelect.value = 'none'; // 'none'にリセット
+            localStorage.removeItem(`unit_input_${itemKey}_${day}`); // localStorageから値を削除
         }
     }
     // リセット後に合計を再計算して表示を更新
@@ -409,4 +412,5 @@ document.addEventListener('DOMContentLoaded', async () => {
     // 入力フィールドの変更時に自動計算しないようにイベントリスナーを削除
     // 代わりにOKボタンで calculateAndSave を呼び出す
     // inputContainer.addEventListener('input', ... ) のブロックは削除
+    // NOTE: generateInputForms内で各入力要素にイベントリスナーを追加するように変更しました。
 });
