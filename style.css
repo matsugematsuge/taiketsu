@@ -106,10 +106,22 @@ h2 {
     max-width: 200px; /* 入力欄の最大幅 */
 }
 
+/* 単位セレクタのスタイル */
+.input-group select {
+    padding: 8px 5px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    font-size: 14px;
+    margin-left: 10px; /* 入力欄との間隔 */
+    width: 60px; /* 単位セレクタの幅を固定 */
+}
+
+
 .input-group .multiplier-display {
     margin-left: 15px;
     color: #666;
     font-size: 14px;
+    flex-shrink: 0; /* 縮まないように */
 }
 
 .calculate-button {
@@ -165,6 +177,11 @@ h2 {
     .input-group input[type="number"] {
         width: 100%;
         max-width: none;
+    }
+    .input-group select {
+        width: 100%;
+        margin-left: 0;
+        margin-top: 5px;
     }
     .input-group .multiplier-display {
         margin-left: 0;
