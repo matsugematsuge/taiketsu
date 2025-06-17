@@ -62,7 +62,7 @@ async function loadMultipliers() {
             },
             "wednesday": {
                 "科学研究の残り時間を1分短縮する": { "multiplier": 150.0, "default_unit": "none", "input_unit_type": "time" },
-                "施設建設で戦力を1獲得する": { "multiplier": 30.0, "default_unit": "none" },
+                "科学研究で戦力を1獲得する": { "multiplier": 30.0, "default_unit": "none" },
                 "知恵の勲章を1枚消費する": { "multiplier": 750.0, "default_unit": "none" },
                 "レーダークエストを1回クリアする": { "multiplier": 30000.0, "default_unit": "none" },
                 "Lv.1ドローン宝箱を開ける": { "multiplier": 2750.0, "default_unit": "none" },
