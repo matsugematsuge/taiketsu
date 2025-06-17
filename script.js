@@ -1,5 +1,5 @@
 let multipliersData = {}; // 全曜日の倍率データと単位情報を保持するオブジェクト
-let unitFactors = {};     // 単位ごとの調整倍率を保持するオブジェクト
+let unitFactors = {};      // 単位ごとの調整倍率を保持するオブジェクト
 
 /**
  * 倍率データをJSONファイルから非同期で読み込む関数
@@ -56,6 +56,7 @@ async function loadMultipliers() {
             },
             "tuesday": {
                 "建造の残り時間を1分短縮する": { "multiplier": 150.0, "default_unit": "none", "input_unit_type": "time" },
+                "施設建設で戦力を1獲得する": { "multiplier": 30.0, "default_unit": "none" },
                 "UR貿易輸送車を1回発車する": { "multiplier": 300000.0, "default_unit": "none" },
                 "UR極秘任務を1回遂行する": { "multiplier": 225000.0, "default_unit": "none" },
                 "生存者募集を1回行う": { "multiplier": 4500.0, "default_unit": "none" }
@@ -185,7 +186,7 @@ function generateInputForms() {
 
             if (itemData.input_unit_type === "time") {
                 unitOptionsToDisplay = ['minute', 'hour', 'day'].filter(unit => unitFactors.hasOwnProperty(unit));
-            } else if (itemData.per_value || itemData.input_unit_type === "quantity") {
+            } else if (itemData.per_value || itemData.input_unit_type === "quantity" || itemKey.includes("採集する")) {
                 unitOptionsToDisplay = ['K', 'M', 'G'].filter(unit => unitFactors.hasOwnProperty(unit));
             }
 
@@ -232,8 +233,8 @@ function generateInputForms() {
                     // デフォルト単位の設定ロジック
                     if (itemData.input_unit_type === "time") {
                         unitInputSelect.value = 'minute';
-                    } else if (itemData.per_value || itemData.input_unit_type === "quantity") {
-                        unitInputSelect.value = 'K';
+                    } else if (itemData.per_value || itemData.input_unit_type === "quantity" || itemKey.includes("採集する")) {
+                        unitInputSelect.value = 'K'; // デフォルトをKに設定
                     } else {
                         unitInputSelect.value = 'none';
                     }
@@ -303,8 +304,8 @@ function restoreUnitSelectionsAndCalculateTotal(day) {
                 // デフォルト単位の設定ロジック
                 if (itemData.input_unit_type === "time") {
                     unitInputSelect.value = 'minute';
-                } else if (itemData.per_value || itemData.input_unit_type === "quantity") {
-                    unitInputSelect.value = 'K';
+                } else if (itemData.per_value || itemData.input_unit_type === "quantity" || itemKey.includes("採集する")) {
+                    unitInputSelect.value = 'K'; // デフォルトをKに設定
                 } else {
                     unitInputSelect.value = 'none';
                 }
