@@ -1,179 +1,169 @@
-body {
-    font-family: sans-serif;
-    margin: 0;
-    padding: 20px;
-    background-color: #f4f4f4;
-    display: flex;
-    justify-content: center;
-    align-items: flex-start;
-    min-height: 100vh;
-}
+let multipliersData = {}; // 全曜日の倍率データを保持するオブジェクト
 
-.container {
-    background-color: #fff;
-    padding: 30px;
-    border-radius: 8px;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-    width: 100%;
-    max-width: 700px;
-}
+/**
+ * 倍率データをJSONファイルから非同期で読み込む関数
+ */
+async function loadMultipliers() {
+    try {
+        const response = await fetch('multipliers.json'); // multipliers.jsonを読み込み
+        if (!response.ok) {
+            throw new Error(`HTTP error! status: ${response.status}`);
+        }
+        multipliersData = await response.json(); // JSONとしてパースしてmultipliersData変数に格納
+        console.log('倍率データを読み込みました:', multipliersData);
 
-h1 {
-    text-align: center;
-    color: #333;
-    margin-bottom: 25px;
-}
+        // 各曜日の入力フォームを動的に生成
+        generateInputForms();
 
-.tabs {
-    margin-top: 20px;
-}
+        // データを読み込んだ後に初期計算を実行し、最初のタブをアクティブにする
+        const firstTabButton = document.querySelector('.tab-button.active');
+        if (firstTabButton) {
+            firstTabButton.click(); // openTab関数がcalculateTotalを呼び出す
+        } else {
+            // アクティブなタブボタンがない場合、最初のタブボタンをクリック
+            document.querySelector('.tab-button')?.click();
+        }
 
-.tab-header {
-    display: flex;
-    border-bottom: 2px solid #ddd;
-    margin-bottom: 20px;
-    overflow-x: auto; /* タブが多い場合にスクロールできるように */
-    white-space: nowrap; /* タブが折り返さないように */
-    padding-bottom: 5px; /* 下線との隙間を調整 */
-}
-
-.tab-button {
-    background-color: #eee;
-    border: none;
-    padding: 10px 15px;
-    cursor: pointer;
-    font-size: 16px;
-    transition: background-color 0.3s ease;
-    border-radius: 5px 5px 0 0; /* 上部の角を丸く */
-    margin-right: 5px; /* タブ間のスペース */
-    flex-shrink: 0; /* タブが縮まないように */
-}
-
-.tab-button:hover {
-    background-color: #ddd;
-}
-
-.tab-button.active {
-    background-color: #007bff;
-    color: white;
-    border-bottom: 2px solid #007bff; /* アクティブなタブの下線 */
-    margin-bottom: -2px; /* 下線が重ならないように */
-}
-
-.tab-content {
-    display: none;
-    padding: 15px 0;
-    border-top: 1px solid #eee; /* タブコンテンツの上部に薄い線 */
-}
-
-.tab-content.active {
-    display: block;
-}
-
-h2 {
-    color: #555;
-    margin-top: 0;
-    margin-bottom: 20px;
-    font-size: 20px;
-    border-bottom: 1px solid #eee;
-    padding-bottom: 10px;
-}
-
-/* 入力グループのコンテナ */
-.input-container {
-    margin-bottom: 20px; /* 入力グループ全体の下に余白 */
-}
-
-.input-group {
-    display: flex;
-    align-items: center;
-    margin-bottom: 15px;
-}
-
-.input-group label {
-    flex-basis: 50px; /* ラベルの幅を固定 */
-    margin-right: 10px;
-    font-weight: bold;
-    color: #444;
-}
-
-.input-group input[type="number"] {
-    flex-grow: 1; /* 入力欄を最大限に広げる */
-    padding: 10px;
-    border: 1px solid #ccc;
-    border-radius: 4px;
-    font-size: 16px;
-    max-width: 200px; /* 入力欄の最大幅 */
-}
-
-.input-group .multiplier-display {
-    margin-left: 15px;
-    color: #666;
-    font-size: 14px;
-}
-
-.calculate-button {
-    display: block; /* ブロック要素にして単独で表示 */
-    width: 100px; /* ボタンの幅 */
-    margin: 20px auto; /* 中央寄せ */
-    padding: 10px 20px;
-    background-color: #28a745; /* 緑色 */
-    color: white;
-    border: none;
-    border-radius: 5px;
-    font-size: 16px;
-    cursor: pointer;
-    transition: background-color 0.3s ease;
-}
-
-.calculate-button:hover {
-    background-color: #218838; /* ホバーで少し濃い緑 */
-}
-
-
-.total-display {
-    font-size: 20px;
-    font-weight: bold;
-    text-align: right;
-    margin-top: 30px;
-    padding-top: 15px;
-    border-top: 2px solid #ddd;
-    color: #333;
-}
-
-.total-display span {
-    color: #007bff;
-    margin-left: 10px;
-}
-
-/* スマホ表示時の調整 */
-@media (max-width: 600px) {
-    .container {
-        padding: 15px;
-    }
-    .tab-button {
-        font-size: 14px;
-        padding: 8px 10px;
-    }
-    .input-group {
-        flex-direction: column;
-        align-items: flex-start;
-    }
-    .input-group label {
-        margin-bottom: 5px;
-    }
-    .input-group input[type="number"] {
-        width: 100%;
-        max-width: none;
-    }
-    .input-group .multiplier-display {
-        margin-left: 0;
-        margin-top: 5px;
-    }
-    .total-display {
-        text-align: left;
-    }
-    .calculate-button {
-        width: 80%; /* スマホでボタンの幅を調整 */
+    } catch (error) {
+        console.error('倍率データの読み込み中にエラーが発生しました:', error);
+        // エラーが発生した場合のフォールバック（A～Iのデフォルト値など）
+        console.warn('デフォルトの倍率データを使用します。');
+        multipliersData = {
+            "monday":    { "A": 2500, "B": 1000, "C": 1000, "D": 500, "E": 200, "F": 100, "G": 50, "H": 25, "I": 10 },
+            "tuesday":   { "A": 2500, "B": 1000, "C": 1000, "D": 500, "E": 200, "F": 100, "G": 50, "H": 25, "I": 10 },
+            "wednesday": { "A": 2500, "B": 1000, "C": 1000, "D": 500, "E": 200, "F": 100, "G": 50, "H": 25, "I": 10 },
+            "thursday":  { "A": 2500, "B": 1000, "C": 1000, "D": 500, "E": 200, "F": 100, "G": 50, "H": 25, "I": 10 },
+            "friday":    { "A": 2500, "B": 1000, "C": 1000, "D": 500, "E": 200, "F": 100, "G": 50, "H": 25, "I": 10 },
+            "saturday":  { "A": 2500, "B": 1000, "C": 1000, "D": 500, "E": 200, "F": 100, "G": 50, "H": 25, "I": 10 }
+        };
+        generateInputForms(); // フォールバックデータでフォームを生成
+        const firstTabButton = document.querySelector('.tab-button.active');
+        if (firstTabButton) {
+            firstTabButton.click();
+        } else {
+            document.querySelector('.tab-button')?.click();
+        }
     }
 }
+
+/**
+ * multipliersDataを元に、各曜日の入力フォームを動的に生成する関数
+ */
+function generateInputForms() {
+    const days = ['monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday'];
+    days.forEach(day => {
+        const inputContainer = document.getElementById(`inputContainer_${day}`);
+        if (!inputContainer) return; // コンテナが見つからなければスキップ
+
+        // 既存の内容をクリア
+        inputContainer.innerHTML = '';
+
+        const dayMultipliers = multipliersData[day];
+        if (!dayMultipliers) return; // その曜日のデータがなければスキップ
+
+        // JSONに定義されているキー（A, B, C...）の順番でフォームを生成
+        for (const itemKey in dayMultipliers) {
+            const multiplierValue = dayMultipliers[itemKey];
+
+            const inputGroup = document.createElement('div');
+            inputGroup.classList.add('input-group');
+
+            inputGroup.innerHTML = `
+                <label for="input${itemKey}_${day}">${itemKey}:</label>
+                <input type="number" id="input${itemKey}_${day}" value="" placeholder="数字を入力">
+                <span class="multiplier-display">(倍率: <span id="multiplier${itemKey}_${day}">${multiplierValue.toLocaleString()}</span>)</span>
+            `;
+            inputContainer.appendChild(inputGroup);
+        }
+    });
+}
+
+/**
+ * 曜日タブを切り替える関数
+ * @param {Event} evt - クリックイベント
+ * @param {string} tabName - 表示するタブのID (例: 'monday')
+ */
+function openTab(evt, tabName) {
+    let i, tabcontent, tablinks;
+
+    // 全てのタブコンテンツを非表示にする
+    tabcontent = document.getElementsByClassName("tab-content");
+    for (i = 0; i < tabcontent.length; i++) {
+        tabcontent[i].classList.remove("active");
+    }
+
+    // 全てのタブボタンから 'active' クラスを削除する
+    tablinks = document.getElementsByClassName("tab-button");
+    for (i = 0; i < tablinks.length; i++) {
+        tablinks[i].classList.remove("active");
+    }
+
+    // 指定されたタブコンテンツを表示し、対応するタブボタンをアクティブにする
+    document.getElementById(tabName).classList.add("active");
+    evt.currentTarget.classList.add("active");
+
+    // タブが切り替わった際に、localStorageからデータを復元し、そのタブの合計を再計算する
+    restoreInputsAndCalculateTotal(tabName);
+}
+
+/**
+ * 指定された曜日の入力値をlocalStorageから復元し、合計を計算し、表示を更新する関数
+ * @param {string} day - 処理対象の曜日 (例: 'monday')
+ */
+function restoreInputsAndCalculateTotal(day) {
+    const dayMultipliers = multipliersData[day];
+    if (!dayMultipliers) return;
+
+    // localStorageから入力値を復元
+    for (const itemKey in dayMultipliers) {
+        const storedValue = localStorage.getItem(`input${itemKey}_${day}`);
+        const inputElement = document.getElementById(`input${itemKey}_${day}`);
+        if (inputElement && storedValue !== null) {
+            inputElement.value = storedValue;
+        }
+    }
+    // 復元された値で合計を計算
+    calculateTotal(day);
+}
+
+
+/**
+ * 指定された曜日の合計を計算し、表示を更新する関数
+ * multipliersData内のその曜日の項目と倍率をループして計算します。
+ * @param {string} day - 計算対象の曜日 (例: 'monday')
+ */
+function calculateTotal(day) {
+    let total = 0;
+    const dayMultipliers = multipliersData[day]; // その曜日の倍率データを取得
+
+    if (!dayMultipliers) {
+        document.getElementById(`total_${day}`).textContent = '0';
+        return;
+    }
+
+    // その曜日の各項目（A, B, C...）をループして計算
+    for (const itemKey in dayMultipliers) {
+        const multiplierValue = dayMultipliers[itemKey];
+        const inputElement = document.getElementById(`input${itemKey}_${day}`);
+
+        if (inputElement) { // 要素が存在すれば
+            const inputValue = parseFloat(inputElement.value) || 0;
+            total += (inputValue * multiplierValue); // その項目の倍率を使用
+            // 入力値をlocalStorageに保存
+            localStorage.setItem(`input${itemKey}_${day}`, inputValue);
+        }
+    }
+
+    // 計算結果を表示要素にセット
+    document.getElementById(`total_${day}`).textContent = total.toLocaleString(); // カンマ区切りで表示
+}
+
+
+/**
+ * ページロード時に実行される初期化処理
+ */
+document.addEventListener('DOMContentLoaded', async () => {
+    // まず倍率データをJSONファイルから読み込む
+    await loadMultipliers();
+    // loadMultipliers内で generateInputForms と最初のタブのアクティブ化、初期計算も行われます
+});
