@@ -1,12 +1,13 @@
 {
-  "unit_factors": {
+ "unit_factors": {
     "none": 1,
+    "K": 1000,
     "M": 1000000,
     "G": 100000000
   },
   "monday": {
     "英雄経験値": { "multiplier": 2.5, "default_unit": "M" },
-    "ドローンデータ": { "multiplier": 7.5, "default_unit": "M" },
+    "ドローンデータ": { "multiplier": 7.5, "default_unit": "K" },
     "ドローンギア": { "multiplier": 6250, "default_unit": "none" },
     "D": { "multiplier": 500, "default_unit": "none" },
     "E": { "multiplier": 200, "default_unit": "none" },
