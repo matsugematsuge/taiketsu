@@ -32,7 +32,7 @@ async function loadMultipliers() {
     } catch (error) {
         console.error('倍率データの読み込み中にエラーが発生しました:', error);
         console.warn('デフォルトの倍率データを使用します。');
-        // エラー発生時のフォールバックデータ
+       // エラー発生時のフォールバックデータ
         unitFactors = {
             "none": 1.0,
             "K": 1000.0,
@@ -49,9 +49,9 @@ async function loadMultipliers() {
                 "一度に英雄Expを660以上消費する": { "multiplier": 2.5, "default_unit": "M", "per_value": 660.0 },
                 "ドローン戦闘データを1消費する": { "multiplier": 7.5, "default_unit": "K", "input_unit_type": "quantity" },
                 "ドローンギアを1個消費する": { "multiplier": 6250.0, "default_unit": "none" },
-                "食料を100採集する": { "multiplier": 50.0, "default_unit": "none" },
-                "鋼材を100採集する": { "multiplier": 50.0, "default_unit": "none" },
-                "金貨を100採集する": { "multiplier": 50.0, "default_unit": "none" },
+                "食料を100採集する": { "multiplier": 50.0, "default_unit": "none", "per_value": 100.0 },
+                "鋼材を100採集する": { "multiplier": 50.0, "default_unit": "none", "per_value": 100.0 },
+                "金貨を100採集する": { "multiplier": 50.0, "default_unit": "none", "per_value": 100.0 },
                 "チップ宝箱の開封でチップ材料(上級)を1点獲得": { "multiplier": 2812.5, "default_unit": "none" }
             },
             "tuesday": {
