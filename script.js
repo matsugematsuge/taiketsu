@@ -172,34 +172,27 @@ function generateInputForms() {
         for (const itemKey in dayItems) {
             const itemData = dayItems[itemKey];
             
-            // multiplier-display の表示値（例: +2.5M）は default_unit に基づく
             const displayMultiplier = itemData.multiplier.toFixed(1);
-            // ここを変更: 単位を括弧内に表示しないように常に空にする
             const displayMultiplierUnit = ''; 
             const multiplierDisplayContent = `(+<span id="multiplier${itemKey}_${day}">${displayMultiplier}${displayMultiplierUnit}</span>)`;
             
-            // 入力値の単位選択ドロップダウン
             let unitSelectHtml = '';
             let unitOptionsToDisplay = [];
 
             if (itemData.input_unit_type === "time") {
-                // input_unit_typeが"time"の場合、時間単位を選択できるようにする
                 unitOptionsToDisplay = ['minute', 'hour', 'day'].filter(unit => unitFactors.hasOwnProperty(unit));
-            } else if (itemData.input_unit_type === "quantity" || itemData.per_value) {
-                // input_unit_typeが"quantity"の場合、またはper_valueがある場合、K, M, G の単位を選択できるようにする
+            } else if (itemData.per_value || itemData.input_unit_type === "quantity") {
                 unitOptionsToDisplay = ['K', 'M', 'G'].filter(unit => unitFactors.hasOwnProperty(unit));
             }
 
             if (unitOptionsToDisplay.length > 0) {
                 let unitSelectOptions = '';
                 unitOptionsToDisplay.forEach(unit => {
-                    // ドロップダウンの表示名を調整（例: "minute" -> "分", "K" -> "K"）
                     let displayUnitName;
                     switch (unit) {
                         case 'minute': displayUnitName = '分'; break;
                         case 'hour': displayUnitName = '時間'; break;
                         case 'day': displayUnitName = '日'; break;
-                        // 'K', 'M', 'G' はそのまま表示
                         default: displayUnitName = unit.toUpperCase(); break;
                     }
                     unitSelectOptions += `<option value="${unit}">${displayUnitName}</option>`;
@@ -211,9 +204,7 @@ function generateInputForms() {
                 `;
             }
 
-            // ラベルテキスト (per_valueがあっても「につきX」は表示しない)
-            // itemKeyをそのまま表示
-            let labelText = itemKey;
+            const labelText = itemKey;
 
             const inputGroup = document.createElement('div');
             inputGroup.classList.add('input-group');
@@ -229,27 +220,28 @@ function generateInputForms() {
             // ドロップダウンのデフォルト値とイベントリスナーを設定 (プルダウンが存在する場合のみ)
             const unitInputSelect = document.getElementById(`unitInputSelect_${itemKey}_${day}`);
             if (unitInputSelect) {
+                // ローカルストレージからの単位選択状態の復元
                 const storedUnit = localStorage.getItem(`unit_input_${itemKey}_${day}`);
                 if (storedUnit !== null) {
                     unitInputSelect.value = storedUnit;
                 } else {
                     // デフォルト単位の設定ロジック
                     if (itemData.input_unit_type === "time") {
-                        unitInputSelect.value = 'minute'; // 時間単位のデフォルトは「分」
-                    } else if (itemData.input_unit_type === "quantity" || itemData.per_value) {
-                        unitInputSelect.value = 'K'; // 数量単位（K,M,G）またはper_valueがある場合のデフォルトは「K」
+                        unitInputSelect.value = 'minute';
+                    } else if (itemData.per_value || itemData.input_unit_type === "quantity") {
+                        unitInputSelect.value = 'K';
                     } else {
-                        unitInputSelect.value = 'none'; // それ以外は'none'
+                        unitInputSelect.value = 'none';
                     }
                 }
-                // 単位が変更されたら再計算
-                unitInputSelect.addEventListener('change', () => calculateAndSave(day));
+                // 単位が変更されたら再計算 (と単位選択の保存)
+                unitInputSelect.addEventListener('change', () => calculateTotal(day));
             }
             
-            // 入力フィールドの変更時にも再計算
+            // 入力フィールドの変更時にも再計算 (入力値は保存しない)
             const inputElement = document.getElementById(`input${itemKey}_${day}`);
             if (inputElement) {
-                inputElement.addEventListener('input', () => calculateAndSave(day));
+                inputElement.addEventListener('input', () => calculateTotal(day));
             }
         }
     });
@@ -276,27 +268,25 @@ function openTab(evt, tabName) {
     document.getElementById(tabName).classList.add("active");
     evt.currentTarget.classList.add("active");
 
-    restoreInputsAndCalculateTotal(tabName);
+    // タブ切り替え時に単位選択状態を復元し、計算
+    restoreUnitSelectionsAndCalculateTotal(tabName);
 }
 
 /**
- * 指定された曜日の入力値と単位選択をlocalStorageから復元し、合計を計算し、表示を更新する関数
+ * 指定された曜日の単位選択をlocalStorageから復元し、合計を計算し、表示を更新する関数
  * @param {string} day - 処理対象の曜日 (例: 'monday')
  */
-function restoreInputsAndCalculateTotal(day) {
+function restoreUnitSelectionsAndCalculateTotal(day) {
     const dayItems = multipliersData[day];
     if (!dayItems) return;
 
     for (const itemKey in dayItems) {
         const itemData = dayItems[itemKey]; 
 
-        // 入力値の復元
-        const storedValue = localStorage.getItem(`input${itemKey}_${day}`);
+        // 入力値は復元しないので、常に空にする
         const inputElement = document.getElementById(`input${itemKey}_${day}`);
-        if (inputElement && storedValue !== null) {
-            inputElement.value = storedValue;
-        } else if (inputElement) {
-            inputElement.value = ''; // localStorageに値がない場合は空にする
+        if (inputElement) {
+            inputElement.value = ''; 
         }
 
         // 入力単位選択状態の復元 (プルダウンが存在する場合のみ)
@@ -308,71 +298,25 @@ function restoreInputsAndCalculateTotal(day) {
             } else {
                 // デフォルト単位の設定ロジック
                 if (itemData.input_unit_type === "time") {
-                    unitInputSelect.value = 'minute'; // 時間単位のデフォルトは「分」
-                } else if (itemData.input_unit_type === "quantity" || itemData.per_value) {
-                    unitInputSelect.value = 'K'; // 数量単位（K,M,G）またはper_valueがある場合のデフォルトは「K」
+                    unitInputSelect.value = 'minute';
+                } else if (itemData.per_value || itemData.input_unit_type === "quantity") {
+                    unitInputSelect.value = 'K';
                 } else {
-                    unitInputSelect.value = 'none'; // それ以外は'none'
+                    unitInputSelect.value = 'none';
                 }
             }
         }
     }
-    // 復元された値で合計を計算
+    // 復元された単位選択で合計を計算
     calculateTotal(day);
 }
 
 /**
  * 指定された曜日の合計を計算し、表示を更新する関数
- * この関数はlocalStorageへの保存を行わない。
+ * この関数は入力値をlocalStorageに保存しないが、単位選択は保存する。
  * @param {string} day - 計算対象の曜日 (例: 'monday')
  */
 function calculateTotal(day) {
-    let total = 0;
-    const dayItems = multipliersData[day]; // その曜日の項目データ
-
-    if (!dayItems) {
-        document.getElementById(`total_${day}`).textContent = '0.0';
-        return;
-    }
-
-    for (const itemKey in dayItems) {
-        const itemData = dayItems[itemKey];
-        const baseMultiplier = itemData.multiplier;
-        const multiplierDefaultUnit = itemData.default_unit || "none"; // multiplier自身の単位
-        const perValue = itemData.per_value || 1.0; 
-
-        const inputElement = document.getElementById(`input${itemKey}_${day}`);
-        const unitInputSelect = document.getElementById(`unitInputSelect_${itemKey}_${day}`); // 入力値に適用する単位選択
-
-        if (inputElement) {
-            const inputValue = parseFloat(inputElement.value) || 0;
-            
-            // 入力値に適用する単位係数
-            let inputUnitFactor = 1.0;
-            if (unitInputSelect) {
-                inputUnitFactor = unitFactors[unitInputSelect.value] || 1.0;
-            }
-            
-            // 倍率自体に適用する単位係数
-            const multiplierUnitFactor = unitFactors[multiplierDefaultUnit] || 1.0;
-
-            // 計算: ((inputValue * inputUnitFactor) / perValue) * (baseMultiplier * multiplierUnitFactor);
-            // perValueは計算には使用されるが、入力値自体の単位とは独立。
-            // inputValue * inputUnitFactor で実際の量に変換され、それを perValue で割って「何回分の操作に相当するか」を計算。
-            // その後、baseMultiplier * multiplierUnitFactor を掛ける。
-            total += ((inputValue * inputUnitFactor) / perValue) * (baseMultiplier * multiplierUnitFactor);
-        }
-    }
-
-    document.getElementById(`total_${day}`).textContent = Math.ceil(total).toLocaleString();
-}
-
-/**
- * 入力値を計算し、表示を更新する関数
- * OKボタンクリック時に実行される。localStorageへの保存も行う。
- * @param {string} day - 処理対象の曜日 (例: 'monday')
- */
-function calculateAndSave(day) {
     let total = 0;
     const dayItems = multipliersData[day];
 
@@ -385,7 +329,7 @@ function calculateAndSave(day) {
         const itemData = dayItems[itemKey];
         const baseMultiplier = itemData.multiplier;
         const multiplierDefaultUnit = itemData.default_unit || "none";
-        const perValue = itemData.per_value || 1.0;
+        const perValue = itemData.per_value || 1.0; 
 
         const inputElement = document.getElementById(`input${itemKey}_${day}`);
         const unitInputSelect = document.getElementById(`unitInputSelect_${itemKey}_${day}`);
@@ -398,17 +342,15 @@ function calculateAndSave(day) {
             if (unitInputSelect) {
                 currentInputUnit = unitInputSelect.value;
                 inputUnitFactor = unitFactors[currentInputUnit] || 1.0;
+                // 単位選択はlocalStorageに保存
+                localStorage.setItem(`unit_input_${itemKey}_${day}`, currentInputUnit);
             }
             
             const multiplierUnitFactor = unitFactors[multiplierDefaultUnit] || 1.0;
 
             total += ((inputValue * inputUnitFactor) / perValue) * (baseMultiplier * multiplierUnitFactor);
 
-            // localStorageに保存
-            localStorage.setItem(`input${itemKey}_${day}`, inputValue.toString());
-            if (unitInputSelect) { // 入力単位選択が存在する場合のみ保存
-                localStorage.setItem(`unit_input_${itemKey}_${day}`, currentInputUnit);
-            }
+            // 入力値はlocalStorageに保存しない
         }
     }
     document.getElementById(`total_${day}`).textContent = Math.ceil(total).toLocaleString();
@@ -416,7 +358,8 @@ function calculateAndSave(day) {
 
 
 /**
- * 指定された曜日のすべての入力フィールドとlocalStorageの値をリセットする関数
+ * 指定された曜日のすべての入力フィールドをリセットする関数
+ * 単位選択はリセットされず、localStorageに保持された値がそのまま使われる。
  * @param {string} day - リセット対象の曜日 (例: 'monday')
  */
 function resetInputs(day) {
@@ -427,27 +370,12 @@ function resetInputs(day) {
         const inputElement = document.getElementById(`input${itemKey}_${day}`);
         if (inputElement) {
             inputElement.value = ''; // 入力フィールドをクリア
-            localStorage.removeItem(`input${itemKey}_${day}`); // localStorageから値を削除
         }
-
-        // 入力単位選択をリセット (プルダウンが存在する場合のみ)
-        const unitInputSelect = document.getElementById(`unitInputSelect_${itemKey}_${day}`);
-        if (unitInputSelect) {
-            const itemData = dayItems[itemKey];
-            // デフォルト単位の設定ロジックをリセット時にも適用
-            if (itemData.input_unit_type === "time") {
-                unitInputSelect.value = 'minute'; // 時間単位のデフォルトは「分」
-            } else if (itemData.input_unit_type === "quantity" || itemData.per_value) {
-                unitInputSelect.value = 'K'; // 数量単位（K,M,G）またはper_valueがある場合のデフォルトは「K」
-            } else {
-                unitInputSelect.value = 'none'; // それ以外は'none'
-            }
-            localStorage.removeItem(`unit_input_${itemKey}_${day}`); // localStorageから値を削除
-        }
+        // 単位選択はlocalStorageから削除しないため、ここでは何もしない
     }
     // リセット後に合計を再計算して表示を更新
     calculateTotal(day);
-    alert('入力内容がリセットされました！'); // リセットされたことをユーザーに通知
+    alert('入力内容がリセットされました！');
 }
 
 
@@ -456,9 +384,4 @@ function resetInputs(day) {
  */
 document.addEventListener('DOMContentLoaded', async () => {
     await loadMultipliers();
-
-    // 入力フィールドの変更時に自動計算しないようにイベントリスナーを削除
-    // 代わりにOKボタンで calculateAndSave を呼び出す
-    // inputContainer.addEventListener('input', ... ) のブロックは削除
-    // NOTE: generateInputForms内で各入力要素にイベントリスナーを追加するように変更しました。
 });
