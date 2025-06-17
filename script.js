@@ -168,8 +168,7 @@ function generateInputForms() {
 
         for (const itemKey in dayItems) {
             const itemData = dayItems[itemKey];
-            // toFixed(1)で小数点以下1桁表示にフォーマット
-            const multiplierValue = itemData.multiplier.toFixed(1);
+            const multiplierValue = itemData.multiplier.toFixed(1); // 小数点以下1桁表示にフォーマット
             const defaultUnit = itemData.default_unit || "none";
 
             const inputGroup = document.createElement('div');
@@ -190,12 +189,12 @@ function generateInputForms() {
                 `;
             }
 
-            // ここを修正: 倍率表示と入力フィールドの順序とフォーマットを変更
+            // ここを修正: 倍率表示を最後尾に移動
             inputGroup.innerHTML = `
                 <label for="input${itemKey}_${day}">${itemKey}:</label>
-                <span class="multiplier-display">(+<span id="multiplier${itemKey}_${day}">${multiplierValue}</span>)</span>
                 <input type="number" id="input${itemKey}_${day}" value="" placeholder="数字を入力">
                 ${unitSelectHtml}
+                <span class="multiplier-display">(+<span id="multiplier${itemKey}_${day}">${multiplierValue}</span>)</span>
             `;
             inputContainer.appendChild(inputGroup);
 
@@ -284,14 +283,13 @@ function calculateTotal(day) {
     const dayItems = multipliersData[day]; // その曜日の項目データ
 
     if (!dayItems) {
-        document.getElementById(`total_${day}`).textContent = '0.0'; // 小数点1桁表示に合わせる
+        document.getElementById(`total_${day}`).textContent = '0.0';
         return;
     }
 
-    // その曜日の各項目（A, B, C...）をループして計算
     for (const itemKey in dayItems) {
-        const itemData = dayItems[itemKey]; // { multiplier: X, default_unit: Y }
-        const baseMultiplier = itemData.multiplier; // 項目ごとの基本倍率
+        const itemData = dayItems[itemKey];
+        const baseMultiplier = itemData.multiplier;
         const defaultUnit = itemData.default_unit || "none";
 
         const inputElement = document.getElementById(`input${itemKey}_${day}`);
