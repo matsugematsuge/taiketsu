@@ -172,10 +172,16 @@ function generateInputForms() {
         for (const itemKey in dayItems) {
             const itemData = dayItems[itemKey];
             
-            const displayMultiplier = itemData.multiplier.toFixed(1);
+            // multiplier-display の表示値は default_unit を考慮して表示
+            // default_unitが"none"でない場合は、multiplierをunitFactorsで調整して表示
+            const multiplierForDisplay = itemData.multiplier * (unitFactors[itemData.default_unit] || 1);
+            const displayMultiplier = multiplierForDisplay.toFixed(0); // 小数点以下は表示しない
+            
+            // 単位は括弧内に表示しない
             const displayMultiplierUnit = ''; 
             const multiplierDisplayContent = `(+<span id="multiplier${itemKey}_${day}">${displayMultiplier}${displayMultiplierUnit}</span>)`;
             
+            // 入力値の単位選択ドロップダウン
             let unitSelectHtml = '';
             let unitOptionsToDisplay = [];
 
@@ -193,7 +199,7 @@ function generateInputForms() {
                         case 'minute': displayUnitName = '分'; break;
                         case 'hour': displayUnitName = '時間'; break;
                         case 'day': displayUnitName = '日'; break;
-                        default: displayUnitName = unit.toUpperCase(); break;
+                        default: displayUnitName = unit.toUpperCase(); break; // K, M, Gはそのまま
                     }
                     unitSelectOptions += `<option value="${unit}">${displayUnitName}</option>`;
                 });
@@ -327,8 +333,8 @@ function calculateTotal(day) {
 
     for (const itemKey in dayItems) {
         const itemData = dayItems[itemKey];
-        const baseMultiplier = itemData.multiplier;
-        const multiplierDefaultUnit = itemData.default_unit || "none";
+        const baseMultiplier = itemData.multiplier; // JSONで定義されたそのままの倍率
+
         const perValue = itemData.per_value || 1.0; 
 
         const inputElement = document.getElementById(`input${itemKey}_${day}`);
@@ -337,8 +343,9 @@ function calculateTotal(day) {
         if (inputElement) {
             const inputValue = parseFloat(inputElement.value) || 0;
             
-            let inputUnitFactor = 1.0;
-            let currentInputUnit = 'none';
+            let inputUnitFactor = 1.0; // 入力値に適用される単位係数
+            let currentInputUnit = 'none'; // 現在の入力単位（localStorage保存用）
+
             if (unitInputSelect) {
                 currentInputUnit = unitInputSelect.value;
                 inputUnitFactor = unitFactors[currentInputUnit] || 1.0;
@@ -346,11 +353,44 @@ function calculateTotal(day) {
                 localStorage.setItem(`unit_input_${itemKey}_${day}`, currentInputUnit);
             }
             
-            const multiplierUnitFactor = unitFactors[multiplierDefaultUnit] || 1.0;
+            // JSONで定義された倍率の単位係数 (例: "default_unit": "K" の場合の1000)
+            const multiplierUnitFactor = unitFactors[itemData.default_unit] || 1.0;
 
-            total += ((inputValue * inputUnitFactor) / perValue) * (baseMultiplier * multiplierUnitFactor);
+            // 新しい計算ロジック
+            // (入力値 * 入力単位係数) * (基本倍率 * 倍率のデフォルト単位係数) / perValue
+            // 例: ドローン戦闘データ (multiplier: 7.5, default_unit: K, input_unit_type: quantity)
+            //     入力: 1, 単位: K
+            //     inputValue = 1, inputUnitFactor = 1000 (for K)
+            //     baseMultiplier = 7.5, multiplierUnitFactor = 1000 (for K)
+            //     perValue = 1
+            //     計算: (1 * 1000) * (7.5 * 1000) / 1 = 1000 * 7500 = 7,500,000 (これは誤り)
 
-            // 入力値はlocalStorageに保存しない
+            // 正しい計算ロジック (「ドローン戦闘データ 1 K消費で 7.5 K のポイント」と解釈する場合)
+            // 係数として扱われるのは入力単位のみとし、基本倍率はそのまま乗算する。
+            // ただし、multipliers.jsonのdefault_unitは、その倍率が元々どのスケールで表現されているかを示すもの。
+            // 例えば、7.5Mは7,500,000であり、7.5Kは7,500である。
+            // したがって、multiplierは常に「単位を含まない純粋な値」として扱い、
+            // default_unitは表示時にのみ影響し、計算ではinputUnitFactorのみを使うべき。
+            // もし、7.5(M)という表記が「7.5」という数値自体が百万単位であることを示しているなら、
+            // JSONのmultiplierは「7500000」と書くべき。
+            // しかし、現在のJSONでは7.5と書かれているため、「7.5K」は「7500」を意味し、
+            // 「2.5M」は「2500000」を意味すると解釈するのが自然。
+            // つまり、baseMultiplierは既にdefault_unitの調整がされた値として計算に使うべき。
+            // JSONの `multiplier` には「調整済みの最終的な倍率」が入っていると仮定して計算をシンプルにする。
+            // そうすると、「ドローン戦闘データ 1消費するで7.5(K) = 7500」となる。
+            // これに、入力値の単位を掛ける。
+
+            // ここで計算ロジックを変更
+            // baseMultiplier はJSONに書かれたそのままの数値（例：7.5, 2.5）
+            // multiplierUnitFactor は baseMultiplier の単位（K, Mなど）の係数（例：1000, 1000000）
+            // これらを掛け合わせたものが「1単位あたりの基本ポイント」
+            const pointsPerBaseUnit = baseMultiplier * multiplierUnitFactor;
+
+            // 入力値 * 入力単位係数 が「実際に消費された量」
+            const consumedAmount = inputValue * inputUnitFactor;
+
+            // (消費された量 / perValue) * 1単位あたりの基本ポイント
+            total += (consumedAmount / perValue) * pointsPerBaseUnit;
         }
     }
     document.getElementById(`total_${day}`).textContent = Math.ceil(total).toLocaleString();
