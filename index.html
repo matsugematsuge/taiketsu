@@ -25,7 +25,6 @@
                 <div id="inputContainer_monday" class="input-container">
                     </div>
                 <div class="button-group">
-                    <button class="reset-button" onclick="resetInputs('monday')">リセット</button>
                     </div>
                 <div class="total-display">合計: <span id="total_monday">0</span></div>
             </div>
@@ -33,58 +32,40 @@
             <div id="tuesday" class="tab-content">
                 <div id="inputContainer_tuesday" class="input-container"></div>
                 <div class="button-group">
-                    <button class="reset-button" onclick="resetInputs('tuesday')">リセット</button>
-                </div>
+                    </div>
                 <div class="total-display">合計: <span id="total_tuesday">0</span></div>
             </div>
 
             <div id="wednesday" class="tab-content">
                 <div id="inputContainer_wednesday" class="input-container"></div>
                 <div class="button-group">
-                    <button class="reset-button" onclick="resetInputs('wednesday')">リセット</button>
-                </div>
+                    </div>
                 <div class="total-display">合計: <span id="total_wednesday">0</span></div>
             </div>
 
             <div id="thursday" class="tab-content">
                 <div id="inputContainer_thursday" class="input-container"></div>
                 <div class="button-group">
-                    <button class="reset-button" onclick="resetInputs('thursday')">リセット</button>
-                </div>
+                    </div>
                 <div class="total-display">合計: <span id="total_thursday">0</span></div>
             </div>
 
             <div id="friday" class="tab-content">
                 <div id="inputContainer_friday" class="input-container"></div>
                 <div class="button-group">
-                    <button class="reset-button" onclick="resetInputs('friday')">リセット</button>
-                </div>
+                    </div>
                 <div class="total-display">合計: <span id="total_friday">0</span></div>
             </div>
 
             <div id="saturday" class="tab-content">
                 <div id="inputContainer_saturday" class="input-container"></div>
                 <div class="button-group">
-                    <button class="reset-button" onclick="resetInputs('saturday')">リセット</button>
-                </div>
+                    </div>
                 <div class="total-display">合計: <span id="total_saturday">0</span></div>
             </div>
         </div>
     </div>
 
     <script src="script.js"></script>
-    <script>
-        // resetInputs関数は以前のコードにはありませんでした。
-        // もし必要であれば、以下のような関数をscript.jsに追加してください。
-        function resetInputs(day) {
-            const inputContainer = document.getElementById(`inputContainer_${day}`);
-            if (inputContainer) {
-                const inputs = inputContainer.querySelectorAll('input[type="number"]');
-                inputs.forEach(input => input.value = '');
-                // 単位の選択状態はリセットしない（localStorageから復元されるため）
-            }
-            calculateTotal(day); // リセット後に再計算
-        }
-    </script>
 </body>
 </html>
