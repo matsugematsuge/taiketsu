@@ -70,16 +70,6 @@ h1 {
     display: block;
 }
 
-/* 曜日ごとの項目見出しを削除したので、不要なスタイルを削除 */
-/* h2 {
-    color: #555;
-    margin-top: 0;
-    margin-bottom: 20px;
-    font-size: 20px;
-    border-bottom: 1px solid #eee;
-    padding-bottom: 10px;
-} */
-
 .input-container {
     margin-bottom: 20px;
 }
@@ -132,134 +122,24 @@ h1 {
     padding-left: 0;
 }
 
-/* ここから修正 */
+/* ここを修正 */
 .button-group {
     display: flex;
-    justify-content: space-between; /* 要素間に均等なスペース */
+    justify-content: center; /* 中央揃えに */
     align-items: center;
     margin-top: 20px;
-    margin-bottom: 20px; /* 合計表示との間隔 */
-    padding: 0 10px; /* 左右に少しパディング */
+    margin-bottom: 20px;
+    /* padding: 0 10px; は不要か、必要に応じて調整 */
+    gap: 20px; /* ボタン間のスペース */
 }
 
 .reset-button,
 .ok-button {
-    width: 100px; /* 仮の幅。文字数に応じて調整 */
-    padding: 10px 15px; /* 左右のパディングを少し増やして幅を広げる */
-    border: none;
-    border-radius: 5px;
-    font-size: 16px;
-    cursor: pointer;
-    transition: background-color 0.3s ease;
-    flex-grow: 0; /* 幅が拡大しないように */
-    flex-shrink: 0; /* 幅が縮小しないように */
-    text-align: center; /* テキスト中央寄せ */
-    white-space: nowrap; /* テキストの改行を防ぐ */
-}
-
-.reset-button {
-    background-color: #dc3545; /* 赤色 */
-    color: white;
-}
-
-.reset-button:hover {
-    background-color: #c82333; /* ホバーで少し濃い赤 */
-}
-
-.ok-button {
-    background-color: #007bff; /* 青色 (計算ボタンの代わり) */
-    color: white;
-}
-
-.ok-button:hover {
-    background-color: #0056b3; /* ホバーで少し濃い青 */
-}
-
-/* calculation-button は削除 */
-/* .calculate-button {
-    display: block;
     width: 100px;
-    margin: 20px auto;
-    padding: 10px 20px;
-    background-color: #28a745;
-    color: white;
+    padding: 10px 15px;
     border: none;
     border-radius: 5px;
     font-size: 16px;
     cursor: pointer;
     transition: background-color 0.3s ease;
-}
-
-.calculate-button:hover {
-    background-color: #218838;
-} */
-/* 修正ここまで */
-
-.total-display {
-    font-size: 20px;
-    font-weight: bold;
-    text-align: right;
-    margin-top: 30px;
-    padding-top: 15px;
-    border-top: 2px solid #ddd;
-    color: #333;
-}
-
-.total-display span {
-    color: #007bff;
-    margin-left: 10px;
-}
-
-/* スマホ表示時の調整 */
-@media (max-width: 600px) {
-    .container {
-        padding: 15px;
-    }
-    .tab-button {
-        font-size: 14px;
-        padding: 8px 10px;
-    }
-    .input-group {
-        flex-direction: column;
-        align-items: flex-start;
-    }
-    .input-group label {
-        margin-bottom: 5px;
-        flex-basis: auto;
-    }
-    .input-group input[type="number"] {
-        width: calc(100% - 15px);
-        margin-right: 0;
-        margin-bottom: 10px;
-    }
-    .input-group select {
-        width: calc(100% - 15px);
-        margin-left: 0;
-        margin-top: 0;
-        margin-bottom: 10px;
-    }
-    .input-group .multiplier-display {
-        margin-left: 0;
-        margin-right: 0;
-        margin-top: 5px;
-        width: 100%;
-        text-align: left;
-    }
-    /* ここから修正 */
-    .button-group {
-        flex-direction: column; /* スマホでは縦並びにする */
-        align-items: center; /* 中央寄せ */
-    }
-    .reset-button,
-    .ok-button {
-        width: 80%; /* スマホでボタンの幅を調整 */
-        margin-bottom: 10px; /* ボタン間にスペース */
-    }
-    .ok-button {
-        margin-bottom: 0; /* 最後のボタンの下マージンは不要 */
-    }
-    /* 修正ここまで */
-    .total-display {
-        text-align: left;
-    }
-}
+    flex-grow:
