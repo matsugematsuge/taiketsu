@@ -12,7 +12,7 @@
     "APを1消費する": { "multiplier": 375.0, "default_unit": "none" },
     "レーダークエストを1回クリアする": { "multiplier": 30000.0, "default_unit": "none" },
     "一度に英雄Expを660以上消費する": { "multiplier": 2.5, "default_unit": "M", "per_value": 660.0 },
-    "ドローン戦闘データを1消費する": { "multiplier": 7.5, "default_unit": "K", "input_unit_type": "quantity" }, <-- ここに修正
+    "ドローン戦闘データを1消費する": { "multiplier": 7.5, "default_unit": "K", "input_unit_type": "quantity" }, 
     "ドローンギアを1個消費する": { "multiplier": 6250.0, "default_unit": "none" },
     "食料を100採集する": { "multiplier": 50.0, "default_unit": "none" },
     "鋼材を100採集する": { "multiplier": 50.0, "default_unit": "none" },
