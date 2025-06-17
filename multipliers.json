@@ -31,10 +31,10 @@
     "Lv.7ドローン宝箱を開ける": { "multiplier": 2025000, "default_unit": "none" }
   },
   "thursday": {
-    "A": { "multiplier": 2500, "default_unit": "none" },
-    "B": { "multiplier": 1000, "default_unit": "none" },
-    "C": { "multiplier": 1000, "default_unit": "none" },
-    "D": { "multiplier": 500, "default_unit": "none" },
+    "英雄を1回募集する": { "multiplier": 4500, "default_unit": "none" },
+    "一度に英雄Expを660以上消費する": { "multiplier": 2.5, "default_unit": "M" },
+    "UR英雄かけらを1枚消費する": { "multiplier": 25000, "default_unit": "none" },
+    "SSR英雄かけらを1枚消費する": { "multiplier": 8750, "default_unit": "none" },
     "E": { "multiplier": 200, "default_unit": "none" },
     "F": { "multiplier": 100, "default_unit": "none" },
     "G": { "multiplier": 50, "default_unit": "none" },
