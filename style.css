@@ -122,15 +122,13 @@ h1 {
     padding-left: 0;
 }
 
-/* ここを修正 */
 .button-group {
     display: flex;
-    justify-content: center; /* 中央揃えに */
+    justify-content: center;
     align-items: center;
     margin-top: 20px;
     margin-bottom: 20px;
-    /* padding: 0 10px; は不要か、必要に応じて調整 */
-    gap: 20px; /* ボタン間のスペース */
+    gap: 20px;
 }
 
 .reset-button,
@@ -165,7 +163,6 @@ h1 {
 .ok-button:hover {
     background-color: #0056b3;
 }
-/* 修正ここまで */
 
 .total-display {
     font-size: 20px;
@@ -180,6 +177,16 @@ h1 {
 .total-display span {
     color: #007bff;
     margin-left: 10px;
+}
+
+/* 注意書きのスタイル */
+.disclaimer-text {
+    font-size: 0.8em;
+    color: #777;
+    text-align: center;
+    margin-top: -15px;
+    margin-bottom: 20px;
+    display: block;
 }
 
 /* スマホ表示時の調整 */
@@ -220,14 +227,18 @@ h1 {
     .button-group {
         flex-direction: column;
         align-items: center;
-        gap: 10px; /* スマホ時のボタン間のスペース */
+        gap: 10px;
     }
     .reset-button,
     .ok-button {
         width: 80%;
-        margin-bottom: 0; /* 縦並びなので個別のマージンは不要 */
+        margin-bottom: 0;
     }
     .total-display {
         text-align: left;
+    }
+    .disclaimer-text {
+        margin-top: -10px;
+        margin-bottom: 15px;
     }
 }
