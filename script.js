@@ -204,13 +204,13 @@ function generateInputForms() {
                     const storedUnit = localStorage.getItem(`unit_${itemKey}_${day}`);
                     unitSelect.value = storedUnit !== null ? storedUnit : defaultUnit;
 
-                    unitSelect.addEventListener('change', () => {
-                        calculateTotal(day);
-                        localStorage.setItem(`unit_${itemKey}_${day}`, unitSelect.value);
-                    });
+                    // 単位セレクタの変更時も自動で計算は行わない (OKボタンで計算するため)
+                    // unitSelect.addEventListener('change', () => {
+                    //     calculateTotal(day);
+                    // });
                 }
             } else {
-                localStorage.setItem(`unit_${itemKey}_${day}`, 'none');
+                // localStorage.setItem(`unit_${itemKey}_${day}`, 'none'); // デフォルト値の保存はOKボタンで
             }
         }
     });
@@ -258,6 +258,8 @@ function restoreInputsAndCalculateTotal(day) {
         const inputElement = document.getElementById(`input${itemKey}_${day}`);
         if (inputElement && storedValue !== null) {
             inputElement.value = storedValue;
+        } else if (inputElement) { // localStorageに値がない場合は空にする
+            inputElement.value = '';
         }
 
         // 単位選択状態の復元 (プルダウンが存在する場合のみ)
@@ -266,6 +268,8 @@ function restoreInputsAndCalculateTotal(day) {
             const unitSelect = document.getElementById(`unitSelect_${itemKey}_${day}`);
             if (unitSelect && storedUnit !== null) {
                 unitSelect.value = storedUnit;
+            } else if (unitSelect) { // localStorageに値がない場合はデフォルト単位にする
+                unitSelect.value = defaultUnit;
             }
         }
     }
@@ -275,6 +279,7 @@ function restoreInputsAndCalculateTotal(day) {
 
 /**
  * 指定された曜日の合計を計算し、表示を更新する関数
+ * この関数はlocalStorageへの保存を行わない。
  * @param {string} day - 計算対象の曜日 (例: 'monday')
  */
 function calculateTotal(day) {
@@ -305,14 +310,59 @@ function calculateTotal(day) {
             const unitFactor = unitFactors[currentUnit] || 1.0;
 
             total += (inputValue * unitFactor) * baseMultiplier;
-
-            // localStorage.setItem(`input${itemKey}_${day}`, inputValue); // リセットボタンと競合するため、ここでは保存しない
-            // localStorage.setItem(`unit_${itemKey}_${day}`, currentUnit); // リセットボタンと競合するため、ここでは保存しない
         }
     }
 
     document.getElementById(`total_${day}`).textContent = total.toFixed(1).toLocaleString();
 }
+
+/**
+ * 入力値を計算し、localStorageに保存する関数
+ * OKボタンクリック時に実行される。
+ * @param {string} day - 処理対象の曜日 (例: 'monday')
+ */
+function calculateAndSave(day) {
+    let total = 0;
+    const dayItems = multipliersData[day];
+
+    if (!dayItems) {
+        document.getElementById(`total_${day}`).textContent = '0.0';
+        return;
+    }
+
+    for (const itemKey in dayItems) {
+        const itemData = dayItems[itemKey];
+        const baseMultiplier = itemData.multiplier;
+        const defaultUnit = itemData.default_unit || "none";
+
+        const inputElement = document.getElementById(`input${itemKey}_${day}`);
+        const unitSelect = (defaultUnit !== 'none') ? document.getElementById(`unitSelect_${itemKey}_${day}`) : null;
+
+        if (inputElement) {
+            const inputValue = parseFloat(inputElement.value) || 0;
+            let currentUnit = defaultUnit;
+
+            if (unitSelect) {
+                currentUnit = unitSelect.value;
+            }
+            
+            const unitFactor = unitFactors[currentUnit] || 1.0;
+
+            total += (inputValue * unitFactor) * baseMultiplier;
+
+            // ここでlocalStorageに保存する
+            localStorage.setItem(`input${itemKey}_${day}`, inputValue);
+            if (unitSelect) { // プルダウンがある場合のみ単位も保存
+                localStorage.setItem(`unit_${itemKey}_${day}`, currentUnit);
+            } else { // プルダウンがない場合は"none"を保存
+                localStorage.setItem(`unit_${itemKey}_${day}`, 'none');
+            }
+        }
+    }
+    document.getElementById(`total_${day}`).textContent = total.toFixed(1).toLocaleString();
+    alert('入力内容が保存されました！'); // 保存されたことをユーザーに通知
+}
+
 
 /**
  * 指定された曜日のすべての入力フィールドとlocalStorageの値をリセットする関数
@@ -340,6 +390,7 @@ function resetInputs(day) {
     }
     // リセット後に合計を再計算して表示を更新
     calculateTotal(day);
+    alert('入力内容がリセットされました！'); // リセットされたことをユーザーに通知
 }
 
 
@@ -348,32 +399,8 @@ function resetInputs(day) {
  */
 document.addEventListener('DOMContentLoaded', async () => {
     await loadMultipliers();
-    // 各入力フィールドのイベントリスナーを設定 (generateInputFormsで動的に設定するように変更する予定)
-    // 現在の設計では、generateInputForms内で設定されているため、DOMContentLoadedのこの部分は不要になります。
-});
 
-// inputイベントリスナーを動的に生成する generateInputForms 関数内に移動
-// これにより、動的に生成された要素にもイベントリスナーが正しく適用されます。
-document.addEventListener('DOMContentLoaded', async () => {
-    await loadMultipliers();
-
-    // generateInputForms内でinputイベントリスナーが追加されるため、
-    // ここでまとめて追加する必要はなくなりました。
-    // ただし、入力内容が変更された際にlocalStorageに保存する処理は必要。
-    // 各input要素に動的にイベントリスナーを追加します
-    const days = ['monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday'];
-    days.forEach(day => {
-        const inputContainer = document.getElementById(`inputContainer_${day}`);
-        if (inputContainer) {
-            inputContainer.addEventListener('input', (event) => {
-                // イベントターゲットがinput type="number"の場合のみ処理
-                if (event.target.type === 'number') {
-                    calculateTotal(day);
-                    // ここでlocalStorageに保存する
-                    const itemKey = event.target.id.replace(`input`, '').replace(`_${day}`, '');
-                    localStorage.setItem(`input${itemKey}_${day}`, event.target.value);
-                }
-            });
-        }
-    });
+    // 入力フィールドの変更時に自動計算しないようにイベントリスナーを削除
+    // 代わりにOKボタンで calculateAndSave を呼び出す
+    // inputContainer.addEventListener('input', ... ) のブロックは削除
 });
