@@ -44,7 +44,7 @@
     "UR英雄かけらを1枚消費する": { "multiplier": 25000.0, "default_unit": "none" },
     "SSR英雄かけらを1枚消費する": { "multiplier": 8750.0, "default_unit": "none" },
     "SR英雄かけらを1枚消費する": { "multiplier": 2500.0, "default_unit": "none" },
-    "スキルメダルを1枚消費する": { "multiplier": 30.0, "default_unit": "K", "input_unit_type": "quantity" }, <-- ここに修正
+    "スキルメダルを1枚消費する": { "multiplier": 30.0, "default_unit": "K", "input_unit_type": "quantity" }, 
     "専用武装のかけらを1枚消費する": { "multiplier": 25000.0, "default_unit": "none" }
   },
   "friday": {
