@@ -107,6 +107,25 @@ h2 {
     font-size: 14px;
 }
 
+.calculate-button {
+    display: block; /* ブロック要素にして単独で表示 */
+    width: 100px; /* ボタンの幅 */
+    margin: 20px auto; /* 中央寄せ */
+    padding: 10px 20px;
+    background-color: #28a745; /* 緑色 */
+    color: white;
+    border: none;
+    border-radius: 5px;
+    font-size: 16px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+.calculate-button:hover {
+    background-color: #218838; /* ホバーで少し濃い緑 */
+}
+
+
 .total-display {
     font-size: 20px;
     font-weight: bold;
@@ -148,5 +167,8 @@ h2 {
     }
     .total-display {
         text-align: left;
+    }
+    .calculate-button {
+        width: 80%; /* スマホでボタンの幅を調整 */
     }
 }
