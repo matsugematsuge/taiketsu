@@ -32,19 +32,20 @@ async function loadMultipliers() {
     } catch (error) {
         console.error('倍率データの読み込み中にエラーが発生しました:', error);
         console.warn('デフォルトの倍率データを使用します。');
-        // エラー発生時のフォールバックデータ
+        // エラー発生時のフォールバックデータ (Kを追加)
         unitFactors = {
             "none": 1,
+            "K": 1000,
             "M": 1000000,
             "G": 100000000
         };
         multipliersData = {
-            "monday":    { "A": { "multiplier": 2500, "default_unit": "none" }, "B": { "multiplier": 1000, "default_unit": "none" }, "C": { "multiplier": 1000, "default_unit": "none" }, "D": { "multiplier": 500, "default_unit": "none" }, "E": { "multiplier": 200, "default_unit": "none" }, "F": { "multiplier": 100, "default_unit": "none" }, "G": { "multiplier": 50, "default_unit": "none" }, "H": { "multiplier": 25, "default_unit": "none" }, "I": { "multiplier": 10, "default_unit": "none" } },
-            "tuesday":   { "A": { "multiplier": 2500, "default_unit": "none" }, "B": { "multiplier": 1000, "default_unit": "none" }, "C": { "multiplier": 1000, "default_unit": "none" }, "D": { "multiplier": 500, "default_unit": "none" }, "E": { "multiplier": 200, "default_unit": "none" }, "F": { "multiplier": 100, "default_unit": "none" }, "G": { "multiplier": 50, "default_unit": "none" }, "H": { "multiplier": 25, "default_unit": "none" }, "I": { "multiplier": 10, "default_unit": "none" } },
-            "wednesday": { "A": { "multiplier": 2500, "default_unit": "none" }, "B": { "multiplier": 1000, "default_unit": "none" }, "C": { "multiplier": 1000, "default_unit": "none" }, "D": { "multiplier": 500, "default_unit": "none" }, "E": { "multiplier": 200, "default_unit": "none" }, "F": { "multiplier": 100, "default_unit": "none" }, "G": { "multiplier": 50, "default_unit": "none" }, "H": { "multiplier": 25, "default_unit": "none" }, "I": { "multiplier": 10, "default_unit": "none" } },
-            "thursday":  { "A": { "multiplier": 2500, "default_unit": "none" }, "B": { "multiplier": 1000, "default_unit": "none" }, "C": { "multiplier": 1000, "default_unit": "none" }, "D": { "multiplier": 500, "default_unit": "none" }, "E": { "multiplier": 200, "default_unit": "none" }, "F": { "multiplier": 100, "default_unit": "none" }, "G": { "multiplier": 50, "default_unit": "none" }, "H": { "multiplier": 25, "default_unit": "none" }, "I": { "multiplier": 10, "default_unit": "none" } },
-            "friday":    { "A": { "multiplier": 2500, "default_unit": "none" }, "B": { "multiplier": 1000, "default_unit": "none" }, "C": { "multiplier": 1000, "default_unit": "none" }, "D": { "multiplier": 500, "default_unit": "none" }, "E": { "multiplier": 200, "default_unit": "none" }, "F": { "multiplier": 100, "default_unit": "none" }, "G": { "multiplier": 50, "default_unit": "none" }, "H": { "multiplier": 25, "default_unit": "none" }, "I": { "multiplier": 10, "default_unit": "none" } },
-            "saturday":  { "A": { "multiplier": 2500, "default_unit": "none" }, "B": { "multiplier": 1000, "default_unit": "none" }, "C": { "multiplier": 1000, "default_unit": "none" }, "D": { "multiplier": 500, "default_unit": "none" }, "E": { "multiplier": 200, "default_unit": "none" }, "F": { "multiplier": 100, "default_unit": "none" }, "G": { "multiplier": 50, "default_unit": "none" }, "H": { "multiplier": 25, "default_unit": "none" }, "I": { "multiplier": 10, "default_unit": "none" } }
+            "monday":    { "A": { "multiplier": 2500, "default_unit": "none" }, "B": { "multiplier": 1000, "default_unit": "K" }, "C": { "multiplier": 1000, "default_unit": "none" }, "D": { "multiplier": 500, "default_unit": "M" }, "E": { "multiplier": 200, "default_unit": "none" }, "F": { "multiplier": 100, "default_unit": "none" }, "G": { "multiplier": 50, "default_unit": "none" }, "H": { "multiplier": 25, "default_unit": "none" }, "I": { "multiplier": 10, "default_unit": "none" } },
+            "tuesday":   { "A": { "multiplier": 2500, "default_unit": "none" }, "B": { "multiplier": 1000, "default_unit": "K" }, "C": { "multiplier": 1000, "default_unit": "none" }, "D": { "multiplier": 500, "default_unit": "M" }, "E": { "multiplier": 200, "default_unit": "none" }, "F": { "multiplier": 100, "default_unit": "none" }, "G": { "multiplier": 50, "default_unit": "none" }, "H": { "multiplier": 25, "default_unit": "none" }, "I": { "multiplier": 10, "default_unit": "none" } },
+            "wednesday": { "A": { "multiplier": 2500, "default_unit": "none" }, "B": { "multiplier": 1000, "default_unit": "K" }, "C": { "multiplier": 1000, "default_unit": "none" }, "D": { "multiplier": 500, "default_unit": "M" }, "E": { "multiplier": 200, "default_unit": "none" }, "F": { "multiplier": 100, "default_unit": "none" }, "G": { "multiplier": 50, "default_unit": "none" }, "H": { "multiplier": 25, "default_unit": "none" }, "I": { "multiplier": 10, "default_unit": "none" } },
+            "thursday":  { "A": { "multiplier": 2500, "default_unit": "none" }, "B": { "multiplier": 1000, "default_unit": "K" }, "C": { "multiplier": 1000, "default_unit": "none" }, "D": { "multiplier": 500, "default_unit": "M" }, "E": { "multiplier": 200, "default_unit": "none" }, "F": { "multiplier": 100, "default_unit": "none" }, "G": { "multiplier": 50, "default_unit": "none" }, "H": { "multiplier": 25, "default_unit": "none" }, "I": { "multiplier": 10, "default_unit": "none" } },
+            "friday":    { "A": { "multiplier": 2500, "default_unit": "none" }, "B": { "multiplier": 1000, "default_unit": "K" }, "C": { "multiplier": 1000, "default_unit": "none" }, "D": { "multiplier": 500, "default_unit": "M" }, "E": { "multiplier": 200, "default_unit": "none" }, "F": { "multiplier": 100, "default_unit": "none" }, "G": { "multiplier": 50, "default_unit": "none" }, "H": { "multiplier": 25, "default_unit": "none" }, "I": { "multiplier": 10, "default_unit": "none" } },
+            "saturday":  { "A": { "multiplier": 2500, "default_unit": "none" }, "B": { "multiplier": 1000, "default_unit": "K" }, "C": { "multiplier": 1000, "default_unit": "none" }, "D": { "multiplier": 500, "default_unit": "M" }, "E": { "multiplier": 200, "default_unit": "none" }, "F": { "multiplier": 100, "default_unit": "none" }, "G": { "multiplier": 50, "default_unit": "none" }, "H": { "multiplier": 25, "default_unit": "none" }, "I": { "multiplier": 10, "default_unit": "none" } }
         };
         generateInputForms();
         const firstTabButton = document.querySelector('.tab-button.active');
@@ -79,34 +80,51 @@ function generateInputForms() {
             const inputGroup = document.createElement('div');
             inputGroup.classList.add('input-group');
 
-            // 単位選択ドロップダウンのHTMLを生成
-            let unitSelectOptions = '';
-            // unitFactorsのキー（none, M, G）をループしてオプションを作成
-            for (const unit in unitFactors) {
-                unitSelectOptions += `<option value="${unit}">${unit.toUpperCase()}</option>`;
+            // 単位選択ドロップダウンのHTMLを生成 (default_unitが"none"の場合は生成しない)
+            let unitSelectHtml = '';
+            if (defaultUnit !== 'none') {
+                let unitSelectOptions = '';
+                // unitFactorsのキー（K, M, Gなど）をループしてオプションを作成
+                // "none"はプルダウンで表示しないため除外
+                for (const unit in unitFactors) {
+                    if (unit !== 'none') {
+                        unitSelectOptions += `<option value="${unit}">${unit.toUpperCase()}</option>`;
+                    }
+                }
+                unitSelectHtml = `
+                    <select id="unitSelect_${itemKey}_${day}" class="unit-select">
+                        ${unitSelectOptions}
+                    </select>
+                `;
             }
 
             inputGroup.innerHTML = `
                 <label for="input${itemKey}_${day}">${itemKey}:</label>
                 <input type="number" id="input${itemKey}_${day}" value="" placeholder="数字を入力">
-                <select id="unitSelect_${itemKey}_${day}" class="unit-select">
-                    ${unitSelectOptions}
-                </select>
+                ${unitSelectHtml}
                 <span class="multiplier-display">(倍率: <span id="multiplier${itemKey}_${day}">${multiplierValue.toLocaleString()}</span>)</span>
             `;
             inputContainer.appendChild(inputGroup);
 
-            // ドロップダウンのデフォルト値とイベントリスナーを設定
-            const unitSelect = document.getElementById(`unitSelect_${itemKey}_${day}`);
-            if (unitSelect) {
-                unitSelect.value = defaultUnit; // JSONから読み込んだデフォルト値を設定
+            // ドロップダウンのデフォルト値とイベントリスナーを設定 (プルダウンが存在する場合のみ)
+            if (defaultUnit !== 'none') {
+                const unitSelect = document.getElementById(`unitSelect_${itemKey}_${day}`);
+                if (unitSelect) {
+                    // localStorageに保存された単位、またはJSONで指定されたデフォルト単位をセット
+                    const storedUnit = localStorage.getItem(`unit_${itemKey}_${day}`);
+                    unitSelect.value = storedUnit !== null ? storedUnit : defaultUnit;
 
-                // ドロップダウンが変更されたら、そのタブの合計を再計算
-                unitSelect.addEventListener('change', () => {
-                    calculateTotal(day);
-                    // 単位選択状態をlocalStorageに保存
-                    localStorage.setItem(`unit_${itemKey}_${day}`, unitSelect.value);
-                });
+                    // ドロップダウンが変更されたら、そのタブの合計を再計算
+                    unitSelect.addEventListener('change', () => {
+                        calculateTotal(day);
+                        // 単位選択状態をlocalStorageに保存
+                        localStorage.setItem(`unit_${itemKey}_${day}`, unitSelect.value);
+                    });
+                }
+            } else {
+                // "none"の場合は、localStorageに"none"を保存しておく
+                // これがないと、一旦"none"で表示された後、別の単位に設定した場合に次回開いた時に"none"に戻ってしまう可能性がある
+                localStorage.setItem(`unit_${itemKey}_${day}`, 'none');
             }
         }
     });
@@ -146,6 +164,9 @@ function restoreInputsAndCalculateTotal(day) {
     if (!dayItems) return;
 
     for (const itemKey in dayItems) {
+        const itemData = dayItems[itemKey];
+        const defaultUnit = itemData.default_unit || "none";
+
         // 入力値の復元
         const storedValue = localStorage.getItem(`input${itemKey}_${day}`);
         const inputElement = document.getElementById(`input${itemKey}_${day}`);
@@ -153,11 +174,13 @@ function restoreInputsAndCalculateTotal(day) {
             inputElement.value = storedValue;
         }
 
-        // 単位選択状態の復元
-        const storedUnit = localStorage.getItem(`unit_${itemKey}_${day}`);
-        const unitSelect = document.getElementById(`unitSelect_${itemKey}_${day}`);
-        if (unitSelect && storedUnit !== null) {
-            unitSelect.value = storedUnit;
+        // 単位選択状態の復元 (プルダウンが存在する場合のみ)
+        if (defaultUnit !== 'none') {
+            const storedUnit = localStorage.getItem(`unit_${itemKey}_${day}`);
+            const unitSelect = document.getElementById(`unitSelect_${itemKey}_${day}`);
+            if (unitSelect && storedUnit !== null) {
+                unitSelect.value = storedUnit;
+            }
         }
     }
     // 復元された値で合計を計算
@@ -181,22 +204,33 @@ function calculateTotal(day) {
     for (const itemKey in dayItems) {
         const itemData = dayItems[itemKey]; // { multiplier: X, default_unit: Y }
         const baseMultiplier = itemData.multiplier; // 項目ごとの基本倍率
+        const defaultUnit = itemData.default_unit || "none";
 
         const inputElement = document.getElementById(`input${itemKey}_${day}`);
-        const unitSelect = document.getElementById(`unitSelect_${itemKey}_${day}`);
+        // 単位セレクタはdefaultUnitが'none'でない場合のみ存在するため、条件分岐
+        const unitSelect = (defaultUnit !== 'none') ? document.getElementById(`unitSelect_${itemKey}_${day}`) : null;
 
-        if (inputElement && unitSelect) { // 要素が存在すれば
+        if (inputElement) { // 入力要素が存在すれば
             const inputValue = parseFloat(inputElement.value) || 0;
-            const selectedUnit = unitSelect.value;
-            // 選択された単位の調整倍率を取得。unitFactorsに存在しない場合はデフォルトで1
-            const unitFactor = unitFactors[selectedUnit] || 1; 
+            let currentUnit = defaultUnit; // デフォルト単位を初期値とする
+
+            if (unitSelect) { // プルダウンが存在すれば、その選択値を使用
+                currentUnit = unitSelect.value;
+            } else {
+                // プルダウンが存在しない（defaultUnitが'none'の場合）は、localStorageから読み込むか'none'を適用
+                // ただし、localStorageには既に'none'が設定されているはずなので、ここでは特に処理は不要
+                // safety: currentUnit = localStorage.getItem(`unit_${itemKey}_${day}`) || defaultUnit;
+            }
+            
+            const unitFactor = unitFactors[currentUnit] || 1; // 選択された単位の調整倍率、なければ1
 
             // (入力値 × 単位の調整倍率) × 項目の基本倍率
             total += (inputValue * unitFactor) * baseMultiplier;
 
-            // 入力値と単位選択状態をlocalStorageに保存
+            // 入力値は常に保存
             localStorage.setItem(`input${itemKey}_${day}`, inputValue);
-            localStorage.setItem(`unit_${itemKey}_${day}`, selectedUnit);
+            // 単位選択状態は、プルダウンが存在しない場合も'none'として保存
+            localStorage.setItem(`unit_${itemKey}_${day}`, currentUnit);
         }
     }
 
