@@ -47,7 +47,7 @@ async function loadMultipliers() {
                 "APを1消費する": { "multiplier": 375.0, "default_unit": "none" },
                 "レーダークエストを1回クリアする": { "multiplier": 30000.0, "default_unit": "none" },
                 "一度に英雄Expを660以上消費する": { "multiplier": 2.5, "default_unit": "M", "per_value": 660.0 },
-                "ドローン戦闘データを1消費する": { "multiplier": 7.5, "default_unit": "K" },
+                "ドローン戦闘データを1消費する": { "multiplier": 7.5, "default_unit": "K", "input_unit_type": "quantity" },
                 "ドローンギアを1個消費する": { "multiplier": 6250.0, "default_unit": "none" },
                 "食料を100採集する": { "multiplier": 50.0, "default_unit": "none" },
                 "鋼材を100採集する": { "multiplier": 50.0, "default_unit": "none" },
@@ -80,7 +80,7 @@ async function loadMultipliers() {
                 "UR英雄かけらを1枚消費する": { "multiplier": 25000.0, "default_unit": "none" },
                 "SSR英雄かけらを1枚消費する": { "multiplier": 8750.0, "default_unit": "none" },
                 "SR英雄かけらを1枚消費する": { "multiplier": 2500.0, "default_unit": "none" },
-                "スキルメダルを1枚消費する": { "multiplier": 30.0, "default_unit": "K" },
+                "スキルメダルを1枚消費する": { "multiplier": 30.0, "default_unit": "K", "input_unit_type": "quantity" },
                 "専用武装のかけらを1枚消費する": { "multiplier": 25000.0, "default_unit": "none" }
             },
             "friday": {
@@ -181,12 +181,19 @@ function generateInputForms() {
             let unitSelectHtml = '';
             let unitOptionsToDisplay = [];
 
-            if (itemData.per_value) {
-                // per_valueがある項目は、K, M, G の単位を選択できるようにする（'none'は除く）
-                unitOptionsToDisplay = ['K', 'M', 'G'].filter(unit => unitFactors.hasOwnProperty(unit));
-            } else if (itemData.input_unit_type === "time") {
+            if (itemData.input_unit_type === "time") {
                 // input_unit_typeが"time"の場合、時間単位を選択できるようにする
                 unitOptionsToDisplay = ['minute', 'hour', 'day'].filter(unit => unitFactors.hasOwnProperty(unit));
+            } else if (itemData.input_unit_type === "quantity") {
+                // input_unit_typeが"quantity"の場合、K, M, G の単位を選択できるようにする
+                unitOptionsToDisplay = ['K', 'M', 'G'].filter(unit => unitFactors.hasOwnProperty(unit));
+            } else {
+                // それ以外の項目で、もしper_valueがあり、かつK, M, Gの単位がunitFactorsにある場合（英雄Expなど）
+                // ただし、今回は英雄Expもinput_unit_type: "quantity"で対応するため、このelse ifは原則不要
+                // 旧来の per_value ロジックを残す場合はここに記載
+                // if (itemData.per_value && Object.keys(unitFactors).some(unit => ['K', 'M', 'G'].includes(unit))) {
+                //     unitOptionsToDisplay = ['K', 'M', 'G'].filter(unit => unitFactors.hasOwnProperty(unit));
+                // }
             }
 
             if (unitOptionsToDisplay.length > 0) {
@@ -211,11 +218,8 @@ function generateInputForms() {
             }
 
             // ラベルテキスト (per_valueがあっても「につきX」は表示しない)
+            // itemKeyをそのまま表示
             let labelText = itemKey;
-            // 以前の per_value に基づく表示は削除
-            // if (itemData.per_value) {
-            //     labelText += ` (${itemData.per_value}につき)`;
-            // }
 
             const inputGroup = document.createElement('div');
             inputGroup.classList.add('input-group');
@@ -238,8 +242,8 @@ function generateInputForms() {
                     // デフォルト単位の設定ロジック
                     if (itemData.input_unit_type === "time") {
                         unitInputSelect.value = 'minute'; // 時間単位のデフォルトは「分」
-                    } else if (itemData.per_value) {
-                        unitInputSelect.value = 'K'; // per_valueがある場合のデフォルトは「K」
+                    } else if (itemData.input_unit_type === "quantity") {
+                        unitInputSelect.value = 'K'; // 数量単位（K,M,G）のデフォルトは「K」
                     } else {
                         unitInputSelect.value = 'none'; // それ以外は'none'
                     }
@@ -311,8 +315,8 @@ function restoreInputsAndCalculateTotal(day) {
                 // デフォルト単位の設定ロジック
                 if (itemData.input_unit_type === "time") {
                     unitInputSelect.value = 'minute'; // 時間単位のデフォルトは「分」
-                } else if (itemData.per_value) {
-                    unitInputSelect.value = 'K'; // per_valueがある場合のデフォルトは「K」
+                } else if (itemData.input_unit_type === "quantity") {
+                    unitInputSelect.value = 'K'; // 数量単位（K,M,G）のデフォルトは「K」
                 } else {
                     unitInputSelect.value = 'none'; // それ以外は'none'
                 }
@@ -436,8 +440,8 @@ function resetInputs(day) {
             // デフォルト単位の設定ロジックをリセット時にも適用
             if (itemData.input_unit_type === "time") {
                 unitInputSelect.value = 'minute'; // 時間単位のデフォルトは「分」
-            } else if (itemData.per_value) {
-                unitInputSelect.value = 'K'; // per_valueがある場合のデフォルトは「K」
+            } else if (itemData.input_unit_type === "quantity") {
+                unitInputSelect.value = 'K'; // 数量単位（K,M,G）のデフォルトは「K」
             } else {
                 unitInputSelect.value = 'none'; // それ以外は'none'
             }
