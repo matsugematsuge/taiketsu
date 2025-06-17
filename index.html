@@ -3,12 +3,12 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>最終獲得ポイント計算機</title>
+    <title>連盟対決ポイント計算</title>
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
     <div class="container">
-        <h1>最終獲得ポイント計算機</h1>
+        <h1>連盟対決ポイント計算</h1>
 
         <div class="tabs">
             <div class="tab-header">
@@ -21,60 +21,72 @@
             </div>
 
             <div id="monday" class="tab-content active">
-                <h2>月曜日の項目</h2>
                 <div id="inputContainer_monday" class="input-container">
                     </div>
-                <button class="reset-button" onclick="resetInputs('monday')">リセット</button>
+                <div class="button-group">
+                    <button class="reset-button" onclick="resetInputs('monday')">リセット</button>
+                    <button class="ok-button" onclick="calculateAndSave('monday')">OK</button>
+                </div>
                 <div class="total-display">
                     合計獲得ポイント: <span id="total_monday">0.0</span>
                 </div>
             </div>
 
             <div id="tuesday" class="tab-content">
-                <h2>火曜日の項目</h2>
                 <div id="inputContainer_tuesday" class="input-container">
                     </div>
-                <button class="reset-button" onclick="resetInputs('tuesday')">リセット</button>
+                <div class="button-group">
+                    <button class="reset-button" onclick="resetInputs('tuesday')">リセット</button>
+                    <button class="ok-button" onclick="calculateAndSave('tuesday')">OK</button>
+                </div>
                 <div class="total-display">
                     合計獲得ポイント: <span id="total_tuesday">0.0</span>
                 </div>
             </div>
 
             <div id="wednesday" class="tab-content">
-                <h2>水曜日の項目</h2>
                 <div id="inputContainer_wednesday" class="input-container">
                     </div>
-                <button class="reset-button" onclick="resetInputs('wednesday')">リセット</button>
+                <div class="button-group">
+                    <button class="reset-button" onclick="resetInputs('wednesday')">リセット</button>
+                    <button class="ok-button" onclick="calculateAndSave('wednesday')">OK</button>
+                </div>
                 <div class="total-display">
                     合計獲得ポイント: <span id="total_wednesday">0.0</span>
                 </div>
             </div>
 
             <div id="thursday" class="tab-content">
-                <h2>木曜日の項目</h2>
                 <div id="inputContainer_thursday" class="input-container">
                     </div>
-                <button class="reset-button" onclick="resetInputs('thursday')">リセット</button>
+                <div class="button-group">
+                    <button class="reset-button" onclick="resetInputs('thursday')">リセット</button>
+                    <button class="ok-button" onclick="calculateAndSave('thursday')">OK</button>
+                </div>
                 <div class="total-display">
                     合計獲得ポイント: <span id="total_thursday">0.0</span>
                 </div>
             </div>
 
             <div id="friday" class="tab-content">
-                <h2>金曜日の項目</h2>
                 <div id="inputContainer_friday" class="input-container">
                     </div>
-                <button class="reset-button" onclick="resetInputs('friday')">リセット</button>
+                <div class="button-group">
+                    <button class="reset-button" onclick="resetInputs('friday')">リセット</button>
+                    <button class="ok-button" onclick="calculateAndSave('friday')">OK</button>
+                </div>
                 <div class="total-display">
                     合計獲得ポイント: <span id="total_friday">0.0</span>
                 </div>
             </div>
 
             <div id="saturday" class="tab-content">
-                <h2>土曜日の項目</h2>
                 <div id="inputContainer_saturday" class="input-container">
                     </div>
-                <button class="reset-button" onclick="resetInputs('saturday')">リセット</button>
+                <div class="button-group">
+                    <button class="reset-button" onclick="resetInputs('saturday')">リセット</button>
+                    <button class="ok-button" onclick="calculateAndSave('saturday')">OK</button>
+                </div>
                 <div class="total-display">
                     合計獲得ポイント: <span id="total_saturday">0.0</span>
                 </div>
