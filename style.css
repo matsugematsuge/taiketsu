@@ -104,14 +104,13 @@ h2 {
     font-size: 15px;
 }
 
-/* ここを修正 */
 .input-group input[type="number"] {
     width: 100px;
     padding: 10px;
     border: 1px solid #ccc;
     border-radius: 4px;
     font-size: 16px;
-    margin-right: 5px; /* 倍率表示との間隔を調整 */
+    margin-right: 5px;
 }
 
 .input-group select {
@@ -119,27 +118,26 @@ h2 {
     border: 1px solid #ccc;
     border-radius: 4px;
     font-size: 14px;
-    margin-right: 5px; /* 倍率表示との間隔を調整 */
+    margin-right: 5px;
     width: 65px;
     flex-shrink: 0;
 }
 
 .input-group .multiplier-display {
-    /* margin-left: auto; を削除 */
-    margin-right: 0; /* 右寄せはせず、隣接要素とまとめるため0に */
+    margin-right: 0;
     color: #666;
     font-size: 14px;
     flex-shrink: 0;
-    padding-left: 0; /* 不要なパディングを削除 */
+    padding-left: 0;
 }
-/* 修正ここまで */
 
-.calculate-button {
+/* ここから修正 */
+.reset-button {
     display: block;
     width: 100px;
-    margin: 20px auto;
+    margin: 10px auto 20px auto; /* 上部のマージンを調整し、下部に少し余裕を持たせる */
     padding: 10px 20px;
-    background-color: #28a745;
+    background-color: #dc3545; /* 赤色 */
     color: white;
     border: none;
     border-radius: 5px;
@@ -148,9 +146,10 @@ h2 {
     transition: background-color 0.3s ease;
 }
 
-.calculate-button:hover {
-    background-color: #218838;
+.reset-button:hover {
+    background-color: #c82333; /* ホバーで少し濃い赤 */
 }
+/* 修正ここまで */
 
 .total-display {
     font-size: 20px;
@@ -184,7 +183,6 @@ h2 {
         margin-bottom: 5px;
         flex-basis: auto;
     }
-    /* ここを修正 */
     .input-group input[type="number"] {
         width: calc(100% - 15px);
         margin-right: 0;
@@ -198,16 +196,15 @@ h2 {
     }
     .input-group .multiplier-display {
         margin-left: 0;
-        margin-right: 0; /* 右寄せではなくなるので0に */
+        margin-right: 0;
         margin-top: 5px;
         width: 100%;
-        text-align: left; /* 左寄せに戻す */
-    }
-    /* 修正ここまで */
-    .total-display {
         text-align: left;
     }
-    .calculate-button {
-        width: 80%;
+    .reset-button {
+        width: 80%; /* スマホでボタンの幅を調整 */
+    }
+    .total-display {
+        text-align: left;
     }
 }
