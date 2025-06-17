@@ -56,7 +56,6 @@ async function loadMultipliers() {
             },
             "tuesday": {
                 "建造の残り時間を1分短縮する": { "multiplier": 150.0, "default_unit": "none", "input_unit_type": "time" },
-                "施設建設で戦力を1獲得する": { "multiplier": 30.0, "default_unit": "none" },
                 "UR貿易輸送車を1回発車する": { "multiplier": 300000.0, "default_unit": "none" },
                 "UR極秘任務を1回遂行する": { "multiplier": 225000.0, "default_unit": "none" },
                 "生存者募集を1回行う": { "multiplier": 4500.0, "default_unit": "none" }
