@@ -178,7 +178,7 @@ function generateInputForms() {
             
             // 単位は括弧内に表示しない
             const displayMultiplierUnit = ''; 
-            const multiplierDisplayContent = `(+<span id="multiplier${itemKey}_${day}"><span class="math-inline">\{displayMultiplier\}</span>{displayMultiplierUnit}</span>)`;
+            const multiplierDisplayContent = `(+<span id="multiplier${itemKey}_${day}">${displayMultiplier}${displayMultiplierUnit}</span>)`;
             
             // 入力値の単位選択ドロップダウン
             let unitSelectHtml = '';
@@ -200,7 +200,7 @@ function generateInputForms() {
                         case 'day': displayUnitName = '日'; break;
                         default: displayUnitName = unit.toUpperCase(); break; // K, M, Gはそのまま
                     }
-                    unitSelectOptions += `<option value="<span class="math-inline">\{unit\}"\></span>{displayUnitName}</option>`;
+                    unitSelectOptions += `<option value="${unit}">${displayUnitName}</option>`;
                 });
                 unitSelectHtml = `
                     <select id="unitInputSelect_${itemKey}_${day}" class="unit-select">
@@ -215,10 +215,10 @@ function generateInputForms() {
             inputGroup.classList.add('input-group');
 
             inputGroup.innerHTML = `
-                <label for="input${itemKey}_${day}"><span class="math-inline">\{labelText\}\:</label\>
-<input type\="number" id\="input</span>{itemKey}_${day}" value="" placeholder="数字を入力">
-                <span class="math-inline">\{unitSelectHtml\}
-<span class\="multiplier\-display"\></span>{multiplierDisplayContent}</span>
+                <label for="input${itemKey}_${day}">${labelText}:</label>
+                <input type="number" id="input${itemKey}_${day}" value="" placeholder="数字を入力">
+                ${unitSelectHtml}
+                <span class="multiplier-display">${multiplierDisplayContent}</span>
             `;
             inputContainer.appendChild(inputGroup);
 
@@ -255,4 +255,111 @@ function generateInputForms() {
 /**
  * 曜日タブを切り替える関数
  * @param {Event} evt - クリックイベント
- * @param {string} tabName - 表示するタブのID (例
+ * @param {string} tabName - 表示するタブのID (例: 'monday')
+ */
+function openTab(evt, tabName) {
+    let i, tabcontent, tablinks;
+
+    tabcontent = document.getElementsByClassName("tab-content");
+    for (i = 0; i < tabcontent.length; i++) {
+        tabcontent[i].classList.remove("active");
+    }
+
+    tablinks = document.getElementsByClassName("tab-button");
+    for (i = 0; i < tablinks.length; i++) {
+        tablinks[i].classList.remove("active");
+    }
+
+    document.getElementById(tabName).classList.add("active");
+    evt.currentTarget.classList.add("active");
+
+    // タブ切り替え時に単位選択状態を復元し、計算
+    restoreUnitSelectionsAndCalculateTotal(tabName);
+}
+
+/**
+ * 指定された曜日の単位選択をlocalStorageから復元し、合計を計算し、表示を更新する関数
+ * @param {string} day - 処理対象の曜日 (例: 'monday')
+ */
+function restoreUnitSelectionsAndCalculateTotal(day) {
+    const dayItems = multipliersData[day];
+    if (!dayItems) return;
+
+    for (const itemKey in dayItems) {
+        const itemData = dayItems[itemKey]; 
+
+        // 入力値は復元しないので、常に空にする
+        const inputElement = document.getElementById(`input${itemKey}_${day}`);
+        if (inputElement) {
+            inputElement.value = ''; 
+        }
+
+        // 入力単位選択状態の復元 (プルダウンが存在する場合のみ)
+        const unitInputSelect = document.getElementById(`unitInputSelect_${itemKey}_${day}`);
+        if (unitInputSelect) {
+            const storedInputUnit = localStorage.getItem(`unit_input_${itemKey}_${day}`);
+            if (storedInputUnit !== null) {
+                unitInputSelect.value = storedInputUnit;
+            } else {
+                // デフォルト単位の設定ロジック
+                if (itemData.input_unit_type === "time") {
+                    unitInputSelect.value = 'minute';
+                } else if (itemData.per_value || itemData.input_unit_type === "quantity") {
+                    unitInputSelect.value = 'K';
+                } else {
+                    unitInputSelect.value = 'none';
+                }
+            }
+        }
+    }
+    // 復元された単位選択で合計を計算
+    calculateTotal(day);
+}
+
+/**
+ * 指定された曜日の合計を計算し、表示を更新する関数
+ * この関数は入力値をlocalStorageに保存しないが、単位選択は保存する。
+ * @param {string} day - 計算対象の曜日 (例: 'monday')
+ */
+function calculateTotal(day) {
+    let total = 0;
+    const dayItems = multipliersData[day];
+
+    if (!dayItems) {
+        document.getElementById(`total_${day}`).textContent = '0.0';
+        return;
+    }
+
+    for (const itemKey in dayItems) {
+        const itemData = dayItems[itemKey];
+        const baseMultiplier = itemData.multiplier; 
+        const perValue = itemData.per_value || 1.0; 
+
+        const inputElement = document.getElementById(`input${itemKey}_${day}`);
+        const unitInputSelect = document.getElementById(`unitInputSelect_${itemKey}_${day}`);
+
+        if (inputElement) {
+            const inputValue = parseFloat(inputElement.value) || 0;
+            
+            let inputUnitFactor = 1.0; 
+            let currentInputUnit = 'none'; 
+
+            if (unitInputSelect) {
+                currentInputUnit = unitInputSelect.value;
+                inputUnitFactor = unitFactors[currentInputUnit] || 1.0;
+                localStorage.setItem(`unit_input_${itemKey}_${day}`, currentInputUnit);
+            }
+            
+            total += ((inputValue * inputUnitFactor) / perValue) * baseMultiplier;
+        }
+    }
+    // 合計を整数に切り上げ、ローカライズされた文字列で表示
+    document.getElementById(`total_${day}`).textContent = Math.ceil(total).toLocaleString();
+}
+
+/**
+ * ページロード時に実行される初期化処理
+ */
+document.addEventListener('DOMContentLoaded', async () => {
+    await loadMultipliers();
+});
