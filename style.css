@@ -32,9 +32,9 @@ h1 {
     display: flex;
     border-bottom: 2px solid #ddd;
     margin-bottom: 20px;
-    overflow-x: auto; /* タブが多い場合にスクロールできるように */
-    white-space: nowrap; /* タブが折り返さないように */
-    padding-bottom: 5px; /* 下線との隙間を調整 */
+    overflow-x: auto;
+    white-space: nowrap;
+    padding-bottom: 5px;
 }
 
 .tab-button {
@@ -44,9 +44,9 @@ h1 {
     cursor: pointer;
     font-size: 16px;
     transition: background-color 0.3s ease;
-    border-radius: 5px 5px 0 0; /* 上部の角を丸く */
-    margin-right: 5px; /* タブ間のスペース */
-    flex-shrink: 0; /* タブが縮まないように */
+    border-radius: 5px 5px 0 0;
+    margin-right: 5px;
+    flex-shrink: 0;
 }
 
 .tab-button:hover {
@@ -56,14 +56,14 @@ h1 {
 .tab-button.active {
     background-color: #007bff;
     color: white;
-    border-bottom: 2px solid #007bff; /* アクティブなタブの下線 */
-    margin-bottom: -2px; /* 下線が重ならないように */
+    border-bottom: 2px solid #007bff;
+    margin-bottom: -2px;
 }
 
 .tab-content {
     display: none;
     padding: 15px 0;
-    border-top: 1px solid #eee; /* タブコンテンツの上部に薄い線 */
+    border-top: 1px solid #eee;
 }
 
 .tab-content.active {
@@ -79,49 +79,49 @@ h2 {
     padding-bottom: 10px;
 }
 
-/* 入力グループのコンテナ */
 .input-container {
-    margin-bottom: 20px; /* 入力グループ全体の下に余白 */
+    margin-bottom: 20px;
 }
 
 .input-group {
     display: flex;
-    flex-wrap: wrap; /* 要素が収まらない場合に改行 */
-    align-items: center; /* 垂直方向中央寄せを保持 */
+    flex-wrap: wrap;
+    align-items: center;
     margin-bottom: 15px;
-    border: 1px solid #eee; /* グループの視認性を上げるための枠線 */
+    border: 1px solid #eee;
     padding: 10px;
     border-radius: 5px;
     background-color: #fcfcfc;
 }
 
 .input-group label {
-    flex-basis: 100%; /* ラベルが常に1行を占めるように */
-    margin-right: 0; /* 右マージンをなくす */
-    margin-bottom: 8px; /* ラベルの下にスペース */
+    flex-basis: 100%;
+    margin-right: 0;
+    margin-bottom: 8px;
     font-weight: bold;
     color: #444;
-    text-align: left; /* 左寄せ */
-    font-size: 15px; /* フォントサイズを少し大きく */
+    text-align: left;
+    font-size: 15px;
 }
 
-/* ここから修正 */
+/* ここを修正 */
 .input-group .multiplier-display {
-    order: -1; /* ラベルの次に表示されるように */
-    margin-right: 10px; /* 入力エリアとの間隔 */
+    /* order: -1; を削除 */
+    margin-left: auto; /* ここで右寄せに */
     color: #666;
     font-size: 14px;
-    flex-shrink: 0; /* 縮まないように */
-    padding-left: 0; /* 左側のパディングをなくす */
+    flex-shrink: 0;
+    padding-left: 5px; /* 左側に少しパディング */
+    margin-right: 0; /* 右側のマージンは不要に */
 }
 
 .input-group input[type="number"] {
-    width: 100px; /* 最大6桁程度の表示に固定 (必要に応じて調整) */
+    width: 100px;
     padding: 10px;
     border: 1px solid #ccc;
     border-radius: 4px;
     font-size: 16px;
-    margin-right: 10px; /* 他の要素との間隔 */
+    margin-right: 10px; /* 単位セレクタとの間隔 */
 }
 /* 修正ここまで */
 
@@ -132,16 +132,16 @@ h2 {
     border-radius: 4px;
     font-size: 14px;
     margin-right: 10px; /* 次の要素との間隔 */
-    width: 65px; /* 単位セレクタの幅を固定 */
-    flex-shrink: 0; /* 縮まないように */
+    width: 65px;
+    flex-shrink: 0;
 }
 
 .calculate-button {
-    display: block; /* ブロック要素にして単独で表示 */
-    width: 100px; /* ボタンの幅 */
-    margin: 20px auto; /* 中央寄せ */
+    display: block;
+    width: 100px;
+    margin: 20px auto;
     padding: 10px 20px;
-    background-color: #28a745; /* 緑色 */
+    background-color: #28a745;
     color: white;
     border: none;
     border-radius: 5px;
@@ -151,7 +151,7 @@ h2 {
 }
 
 .calculate-button:hover {
-    background-color: #218838; /* ホバーで少し濃い緑 */
+    background-color: #218838;
 }
 
 .total-display {
@@ -179,36 +179,37 @@ h2 {
         padding: 8px 10px;
     }
     .input-group {
-        flex-direction: column; /* スマホでは縦並びを強制 */
-        align-items: flex-start; /* 左寄せ */
+        flex-direction: column;
+        align-items: flex-start;
     }
     .input-group label {
         margin-bottom: 5px;
-        flex-basis: auto; /* ラベルの幅を自動調整 */
+        flex-basis: auto;
     }
-    /* ここから修正 */
+    /* ここを修正 */
     .input-group .multiplier-display {
-        order: 0; /* スマホでは通常の表示順に戻すか、必要に応じて調整 */
+        margin-left: 0; /* 左寄せに戻す */
         margin-right: 0;
-        margin-bottom: 5px; /* 倍率表示の下にスペース */
-        text-align: left; /* 左寄せ */
+        margin-top: 5px;
+        width: 100%;
+        text-align: right; /* 右寄せにする */
     }
     .input-group input[type="number"] {
-        width: calc(100% - 15px); /* 親要素の幅に合わせて調整 */
+        width: calc(100% - 15px);
         margin-right: 0;
-        margin-bottom: 10px; /* 入力欄の下にスペース */
+        margin-bottom: 10px;
     }
     /* 修正ここまで */
     .input-group select {
-        width: calc(100% - 15px); /* 親要素の幅に合わせて調整 */
+        width: calc(100% - 15px);
         margin-left: 0;
         margin-top: 0;
-        margin-bottom: 10px; /* プルダウンの下にスペース */
+        margin-bottom: 10px;
     }
     .total-display {
         text-align: left;
     }
     .calculate-button {
-        width: 80%; /* スマホでボタンの幅を調整 */
+        width: 80%;
     }
 }
