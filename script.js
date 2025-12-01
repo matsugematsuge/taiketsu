@@ -59,8 +59,8 @@ async function loadMultipliers() {
                 "施設建設で戦力を1獲得する": { "multiplier": 30.0, "default_unit": "none" },
                 "UR貿易輸送車を1回発車する": { "multiplier": 300000.0, "default_unit": "none" },
                 "UR極秘任務を1回遂行する": { "multiplier": 225000.0, "default_unit": "none" },
-                "生存者募集を1回行う": { "multiplier": 4500.0, "default_unit": "none" }
-                "兵装素材を1個使う": { "multiplier": 2.5, "default_unit": "default_unit": "K", "input_unit_type": "quantity" }
+                "生存者募集を1回行う": { "multiplier": 4500.0, "default_unit": "none" },
+                "兵装素材を1個使う": { "multiplier": 2.5, "default_unit": "K", "input_unit_type": "quantity" },
                 "兵装コアを1個使う": { "multiplier": 6250.0, "default_unit": "none" }
             },
             "wednesday": {
@@ -365,4 +365,5 @@ function calculateTotal(day) {
 document.addEventListener('DOMContentLoaded', async () => {
     await loadMultipliers();
 });
+
 
