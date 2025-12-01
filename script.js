@@ -135,16 +135,18 @@ async function loadMultipliers() {
                 "Lv.8兵士を1体撃破する": { "multiplier": 27.0, "default_unit": "none" },
                 "Lv.9兵士を1体撃破する": { "multiplier": 30.0, "default_unit": "none" },
                 "Lv.10兵士を1体撃破する": { "multiplier": 33.0, "default_unit": "none" },
+                "Lv.11兵士を1体撃破する": { "multiplier": 36.0, "default_unit": "none" },
                 "Lv.1兵士を1体撃破される": { "multiplier": 5.0, "default_unit": "none" },
                 "Lv.2兵士を1体撃破される": { "multiplier": 7.5, "default_unit": "none" },
                 "Lv.3兵士を1体撃破される": { "multiplier": 10.0, "default_unit": "none" },
                 "Lv.4兵士を1体撃破される": { "multiplier": 12.5, "default_unit": "none" },
                 "Lv.5兵士を1体撃破される": { "multiplier": 15.0, "default_unit": "none" },
                 "Lv.6兵士を1体撃破される": { "multiplier": 17.5, "default_unit": "none" },
-                "v.7兵士を1体撃破される": { "multiplier": 20.0, "default_unit": "none" },
+                "Lv.7兵士を1体撃破される": { "multiplier": 20.0, "default_unit": "none" },
                 "Lv.8兵士を1体撃破される": { "multiplier": 22.5, "default_unit": "none" },
                 "Lv.9兵士を1体撃破される": { "multiplier": 25.0, "default_unit": "none" },
-                "Lv.10兵士を1体撃破される": { "multiplier": 27.5, "default_unit": "none" }
+                "Lv.10兵士を1体撃破される": { "multiplier": 27.5, "default_unit": "none" },
+                "Lv.11兵士を1体撃破される": { "multiplier": 30.0, "default_unit": "none" }
             }
         };
         generateInputForms();
@@ -365,5 +367,6 @@ function calculateTotal(day) {
 document.addEventListener('DOMContentLoaded', async () => {
     await loadMultipliers();
 });
+
 
 
