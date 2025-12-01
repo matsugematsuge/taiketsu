@@ -102,6 +102,7 @@ async function loadMultipliers() {
                 "LV.8兵士を1人訓練する": { "multiplier": 270.0, "default_unit": "none" },
                 "LV.9兵士を1人訓練する": { "multiplier": 300.0, "default_unit": "none" },
                 "LV.10兵士を1人訓練する": { "multiplier": 330.0, "default_unit": "none" },
+                "LV.11兵士を1人訓練する": { "multiplier": 360.0, "default_unit": "none" },
                 "ドミネーターのかけらを1枚消費する": { "multiplier": 25000.0, "default_unit": "none" },
                 "ドミネーターの訓練ノートを100個消費する": { "multiplier": 1562.5, "default_unit": "none", "per_value": 100.0 },
                 "ドミネーターの訓練証明書を1枚消費する": { "multiplier": 3750.0, "default_unit": "none" },
@@ -125,13 +126,14 @@ async function loadMultipliers() {
                 "相手連盟のLv.8兵士を1体撃破する": { "multiplier": 135.0, "default_unit": "none" },
                 "相手連盟のLv.9兵士を1体撃破する": { "multiplier": 150.0, "default_unit": "none" },
                 "相手連盟のLv.10兵士を1体撃破する": { "multiplier": 165.0, "default_unit": "none" },
+                "相手連盟のLv.11兵士を1体撃破する": { "multiplier": 180.0, "default_unit": "none" },
                 "Lv.1兵士を1体撃破する": { "multiplier": 6.0, "default_unit": "none" },
                 "Lv.2兵士を1体撃破する": { "multiplier": 9.0, "default_unit": "none" },
                 "Lv.3兵士を1体撃破する": { "multiplier": 12.0, "default_unit": "none" },
                 "Lv.4兵士を1体撃破する": { "multiplier": 15.0, "default_unit": "none" },
                 "Lv.5兵士を1体撃破する": { "multiplier": 18.0, "default_unit": "none" },
                 "Lv.6兵士を1体撃破する": { "multiplier": 21.0, "default_unit": "none" },
-                "v.7兵士を1体撃破する": { "multiplier": 24.0, "default_unit": "none" },
+                "Lv.7兵士を1体撃破する": { "multiplier": 24.0, "default_unit": "none" },
                 "Lv.8兵士を1体撃破する": { "multiplier": 27.0, "default_unit": "none" },
                 "Lv.9兵士を1体撃破する": { "multiplier": 30.0, "default_unit": "none" },
                 "Lv.10兵士を1体撃破する": { "multiplier": 33.0, "default_unit": "none" },
@@ -140,7 +142,7 @@ async function loadMultipliers() {
                 "Lv.2兵士を1体撃破される": { "multiplier": 7.5, "default_unit": "none" },
                 "Lv.3兵士を1体撃破される": { "multiplier": 10.0, "default_unit": "none" },
                 "Lv.4兵士を1体撃破される": { "multiplier": 12.5, "default_unit": "none" },
-                "Lv.5兵士を1体撃破される": { "multiplier": 15.0, "default_unit": "none" },
+   　　　　　　  "Lv.5兵士を1体撃破される": { "multiplier": 15.0, "default_unit": "none" },
                 "Lv.6兵士を1体撃破される": { "multiplier": 17.5, "default_unit": "none" },
                 "Lv.7兵士を1体撃破される": { "multiplier": 20.0, "default_unit": "none" },
                 "Lv.8兵士を1体撃破される": { "multiplier": 22.5, "default_unit": "none" },
@@ -367,6 +369,7 @@ function calculateTotal(day) {
 document.addEventListener('DOMContentLoaded', async () => {
     await loadMultipliers();
 });
+
 
 
 
